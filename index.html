@@ -93,6 +93,13 @@ button:disabled{opacity:.4}
 #dlgText{line-height:16px;min-height:48px}
 #dlgBtns{display:flex;gap:4px;justify-content:flex-end;margin-top:8px;flex-wrap:wrap}
 #winDeath{left:50%;top:40%;transform:translate(-50%,-50%);width:280px;text-align:center}
+#winMenu{left:50%;top:42%;transform:translate(-50%,-50%);width:220px;z-index:60}
+#winMenu button{display:block;width:100%;margin:4px 0;padding:4px}
+#menuShade{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:59}
+#closed{position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#0b0d10;color:#e8f0ff;font-size:13px;gap:12px}
+#charList .ch{display:flex;justify-content:space-between;align-items:center;padding:3px 0;border-bottom:1px solid #d8e0f0}
+#charList .ch button{margin-left:4px}
+#titleErr{color:#c03030;font-size:11px;min-height:14px}
 #tip{position:fixed;z-index:50;pointer-events:none;background:rgba(255,255,250,.97);border:1px solid #6f81aa;border-radius:5px;padding:5px 8px;max-width:250px;box-shadow:0 2px 6px rgba(0,0,0,.3);line-height:15px}
 #tip b{color:#2a3e7a}
 #title{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 40%,rgba(40,70,40,.55),rgba(5,10,8,.92))}
@@ -162,7 +169,7 @@ button:disabled{opacity:.4}
     <b>Clique no chão</b> para andar (segure para continuar andando).<br>
     <b>Clique num monstro</b> para atacar sem parar. <b>Clique num item</b> para pegar. <b>Clique num NPC</b> para conversar.<br>
     <b>F1–F9</b> ou <b>1–9</b>: barra de atalhos. Arraste itens e habilidades ativas para ela; botão direito limpa.<br>
-    <b>A</b> status · <b>E</b> itens · <b>S</b> habilidades · <b>X</b> sentar · <b>Enter</b> conversar · <b>Esc</b> fecha janelas<br><br>
+    <b>A</b> status · <b>E</b> itens · <b>S</b> habilidades · <b>X</b> sentar · <b>Enter</b> conversar · <b>Esc</b> fecha janelas ou abre o menu<br><br>
     <b>Não há classes.</b> Cada habilidade tem nível de 0 a 100 e sobe com o uso:<br>
     · lute com uma arma para treinar aquela arma e a <b>Força</b>;<br>
     · acerte golpes para treinar <b>Destreza</b>; esquive e ande para treinar <b>Agilidade</b>;<br>
@@ -178,6 +185,18 @@ button:disabled{opacity:.4}
   <div class="title"><span>Conversa</span></div>
   <div class="body"><div id="dlgName"></div><div id="dlgText"></div><div id="dlgBtns"></div></div>
 </div>
+<div id="menuShade" class="hidden"></div>
+<div class="win hidden" id="winMenu">
+  <div class="title"><span>Menu</span><span class="x" data-close="winMenu">x</span></div>
+  <div class="body">
+    <button id="mnBack">Voltar ao jogo</button>
+    <button id="mnHelp">Controles</button>
+    <button id="mnSound">Som: on</button>
+    <button id="mnChar">Trocar de personagem</button>
+    <button id="mnQuit">Fechar o jogo</button>
+  </div>
+</div>
+<div id="closed" class="hidden"><div>Jogo salvo. Você já pode fechar esta aba.</div><button id="btnReopen">Voltar à tela inicial</button></div>
 <div class="win hidden" id="winDeath">
   <div class="title"><span>Aviso</span></div>
   <div class="body"><p style="margin:8px 0 12px">Você foi derrotado.<br><small>Perde 5% dos cobres que carrega.</small></p><button id="btnRevive">Voltar ao vilarejo</button></div>
@@ -190,10 +209,12 @@ button:disabled{opacity:.4}
   <div class="win" id="titleBox" style="position:relative">
     <div class="title"><span>Entrar no mundo</span></div>
     <div class="body">
-      Nome do personagem
+      <div id="charBox" class="hidden" style="margin-bottom:10px">Personagens salvos<div id="charList"></div></div>
+      Novo personagem
       <input id="nameIn" maxlength="16" value="Herói">
+      <div id="titleErr"></div>
       <div style="display:flex;gap:6px;justify-content:flex-end">
-        <button id="btnNew">Novo jogo</button><button id="btnCont" class="hidden">Continuar</button>
+        <button id="btnNew">Criar e jogar</button>
       </div>
     </div>
   </div>
@@ -1534,7 +1555,8 @@ addEventListener('keydown',e=>{
     case'a':toggle('winStats');break;case'e':case'i':toggle('winInv');break;case's':toggle('winSkill');break;case'h':toggle('winHelp');break;
     case'x':case'insert':if(!me.dead&&!me.moving&&!me.cast){me.sit=!me.sit;me.target=null;sfx('sit')}break;
     case'enter':chatIn.focus();e.preventDefault();break;
-    case'escape':for(const w of['winStats','winInv','winSkill','winHelp','winShop','winDlg','winLearn','winGuild'])$(w).classList.add('hidden');pendingSkill=null;updCursor();break;
+    case'escape':{const ws=['winStats','winInv','winSkill','winHelp','winShop','winDlg','winLearn','winGuild'].filter(w=>!$(w).classList.contains('hidden'));
+      if(!$('winMenu').classList.contains('hidden'))closeMenu();else if(ws.length||pendingSkill){ws.forEach(w=>$(w).classList.add('hidden'));pendingSkill=null;updCursor()}else openMenu();break}
   }
 });
 
@@ -1835,7 +1857,18 @@ $('shopBody').addEventListener('click',e=>{
   const s=e.target.closest('[data-sell]');if(s){const id=s.dataset.sell,n=s.dataset.n==='all'?invCount(id):1,v=Math.floor(ITEMS[id].price/2)*n;if(remItem(id,n)){me.zeny+=v;sfx('coin');msg(`Vendeu ${n}x ${ITEMS[id].name} por ${fmt(v)}c.`,'#ffe8a0')}$('tip').classList.add('hidden');renderShop()}
 });
 $('btnRevive').onclick=revive;
-$('btnSound').onclick=()=>{muted=!muted;$('btnSound').textContent='Som: '+(muted?'off':'on')};
+function setMuted(v){muted=v;$('btnSound').textContent=$('mnSound').textContent='Som: '+(muted?'off':'on')}
+$('btnSound').onclick=()=>setMuted(!muted);
+function openMenu(){if(me&&me.dead)return;$('winMenu').classList.remove('hidden');$('menuShade').classList.remove('hidden');sfx('click')}
+function closeMenu(){$('winMenu').classList.add('hidden');$('menuShade').classList.add('hidden')}
+$('menuShade').onclick=closeMenu;
+$('winMenu').querySelector('[data-close]').addEventListener('click',()=>$('menuShade').classList.add('hidden'));
+$('mnBack').onclick=()=>{sfx('click');closeMenu()};
+$('mnHelp').onclick=()=>{closeMenu();toggle('winHelp')};
+$('mnSound').onclick=()=>{setMuted(!muted);sfx('click')};
+$('mnChar').onclick=()=>{save();started=false;location.reload()};
+$('mnQuit').onclick=()=>{save();started=false;closeMenu();$('closed').classList.remove('hidden');try{window.close()}catch(e){}};
+$('btnReopen').onclick=()=>location.reload();
 let lastUI=0,lastBuffs=0,lastMini=0;
 function refreshInfo(){
   $('pName').textContent=me.name;$('cbLv').textContent=me.cb;$('totLv').textContent=me.total;
@@ -1859,9 +1892,14 @@ function drawMini(){
 // =====================================================================
 // Salvar / carregar
 // =====================================================================
-const SAVE_KEY='valhen_save_v2';
-function save(){if(!me||!started)return;try{const k=['name','xp','inv','eq','cards','zeny','learned','quests','hp','sp','last'];const o={};for(const x of k)o[x]=me[x];o.hot=hot;localStorage.setItem(SAVE_KEY,JSON.stringify(o))}catch(e){}}
-function loadSave(){try{const s=localStorage.getItem(SAVE_KEY);return s?JSON.parse(s):null}catch(e){return null}}
+const SAVE_KEY='valhen_save_v2',CHARS_KEY='valhen_chars_v1';
+function loadChars(){
+  let ch={};try{ch=JSON.parse(localStorage.getItem(CHARS_KEY)||'{}')||{}}catch(e){}
+  // save antigo (um personagem só) entra na lista uma vez
+  try{const old=localStorage.getItem(SAVE_KEY);if(old){const o=JSON.parse(old);if(o&&o.name&&!ch[o.name])ch[o.name]=o;localStorage.setItem(CHARS_KEY,JSON.stringify(ch));localStorage.removeItem(SAVE_KEY)}}catch(e){}
+  return ch;
+}
+function save(){if(!me||!started)return;try{const k=['name','xp','inv','eq','cards','zeny','learned','quests','hp','sp','last'];const o={};for(const x of k)o[x]=me[x];o.hot=hot;o.cb=me.cb;o.at=Date.now();const ch=loadChars();ch[me.name]=o;localStorage.setItem(CHARS_KEY,JSON.stringify(ch))}catch(e){}}
 addEventListener('beforeunload',save);
 
 // =====================================================================
@@ -1911,10 +1949,12 @@ function loop(now){
 function boot(){
   buildCursors();setCur('arrow');buildSprites();genMap();makeNPCs();buildGround();buildRooms();
   for(let i=0;i<36;i++)petals.push({x:rand(0,W),y:rand(0,H),vx:rand(6,16),vy:rand(8,18),ph:rand(0,6),col:pick(['#ffc0d8','#ffe0ec','#ffffff','#f8a8c8'])});
-  const sv=loadSave();if(sv){$('btnCont').classList.remove('hidden');$('nameIn').value=sv.name||'Herói'}
+  const chars=loadChars(),names=Object.keys(chars).sort((a,b)=>(chars[b].at||0)-(chars[a].at||0));
+  if(names.length){$('charBox').classList.remove('hidden');$('nameIn').value='';
+    $('charList').innerHTML=names.map(n=>`<div class="ch"><span><b>${n.replace(/</g,'&lt;')}</b> <small style="color:#6a7698">Combate ${chars[n].cb||1} · ${fmt(chars[n].zeny||0)}c</small></span><button data-play="${esc(n)}">Jogar</button></div>`).join('');
+    $('charList').onclick=e=>{const b=e.target.closest('[data-play]');if(!b)return;audio();sfx('click');startGame(chars[b.dataset.play])}}
   $('loading').textContent='Clique em um botão para começar.';
-  $('btnNew').onclick=()=>{audio();sfx('click');const n=($('nameIn').value.trim()||'Herói').slice(0,16);startGame({name:n})};
-  $('btnCont').onclick=()=>{audio();sfx('click');startGame(sv)};
+  $('btnNew').onclick=()=>{audio();sfx('click');const n=$('nameIn').value.trim().slice(0,16);if(!n){$('titleErr').textContent='Digite um nome.';return}if(chars[n]){$('titleErr').textContent='Já existe um personagem com esse nome.';return}startGame({name:n})};
   (function titleLoop(){if(started)return;TIME+=1/60;const t=TIME*.15;g.fillStyle='#0d1a0f';g.fillRect(0,0,W,H);const s=iso(C+Math.cos(t)*6,C+Math.sin(t)*6);g.drawImage(groundC,-Math.round(s.x-W/2),-Math.round(s.y-H/2));requestAnimationFrame(titleLoop)})();
   requestAnimationFrame(loop);
 }
