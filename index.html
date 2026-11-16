@@ -116,7 +116,7 @@ button:disabled{opacity:.4}
     <div class="bar"><label>SP</label><div class="track"><div class="fill sp" id="spFill"></div><span id="spTxt"></span></div></div>
     <div class="lvrow"><span id="lastSk">Último treino: —</span><span id="lastSkP"></span></div>
     <div class="xp"><div id="lastSkB" style="width:0"></div></div>
-    <div class="lvrow" style="margin-top:5px"><span>Zeny: <b id="zeny">0</b></span><span>Nível total <b id="totLv">0</b></span></div>
+    <div class="lvrow" style="margin-top:5px"><span>Cobres: <b id="zeny">0</b></span><span>Nível total <b id="totLv">0</b></span></div>
     <div class="btns">
       <button data-open="winStats">Status (A)</button><button data-open="winInv">Itens (E)</button><button data-open="winSkill">Habil. (S)</button><button data-open="winHelp">Ajuda (H)</button><button id="btnSound">Som: on</button>
     </div>
@@ -124,7 +124,7 @@ button:disabled{opacity:.4}
 </div>
 
 <div id="mini" class="win"><div class="title"><span>Mapa</span></div><div class="body">
-  <div id="mapName">Campos de Valhen</div><canvas id="miniC" width="184" height="96"></canvas><div id="quest"></div>
+  <div id="mapName">Campos do Sabiá</div><canvas id="miniC" width="184" height="96"></canvas><div id="quest"></div>
 </div></div>
 <div id="buffs"></div>
 <div id="xpd"></div>
@@ -145,7 +145,7 @@ button:disabled{opacity:.4}
   <div class="body" id="skillBody"></div>
 </div>
 <div class="win hidden" id="winShop" style="left:50%;top:100px;width:320px;transform:translateX(-50%)">
-  <div class="title"><span>Loja do Tomas</span><span class="x" data-close="winShop">x</span></div>
+  <div class="title"><span>Venda do Tomas</span><span class="x" data-close="winShop">x</span></div>
   <div class="body" id="shopBody"></div>
 </div>
 <div class="win hidden" id="winLearn" style="left:50%;top:80px;width:350px;transform:translateX(-50%)">
@@ -168,8 +168,8 @@ button:disabled{opacity:.4}
     · acerte golpes para treinar <b>Destreza</b>; esquive e ande para treinar <b>Agilidade</b>;<br>
     · leve dano para treinar <b>Resistência</b>; gaste SP para treinar <b>Inteligência</b>;<br>
     · use magias de um elemento para treinar aquele elemento.<br>
-    Ninguém começa com habilidades ativas: aprenda técnicas físicas na <b>Escola de Armas</b> e magias na <b>Torre Arcana</b>, pagando em zeny. Cada uma exige um nível mínimo.<br>
-    Pegue e entregue missões na <b>Guilda dos Aventureiros</b> para ganhar zeny, itens e subir de rank.<br><br>
+    Ninguém começa com habilidades ativas: aprenda técnicas físicas na <b>Galpão de Treino</b> e magias na <b>Cabana da Sábia</b>, pagando em cobres. Cada uma exige um nível mínimo.<br>
+    Pegue e entregue missões na <b>Guilda dos Aventureiros</b> para ganhar cobres, itens e subir de rank.<br><br>
     <b>Elementos:</b> Água › Fogo › Terra › Ar › Água · Luz ⇄ Sombras. Mesmo elemento causa metade do dano.<br>
     O jogo salva sozinho no navegador.
   </div>
@@ -180,13 +180,13 @@ button:disabled{opacity:.4}
 </div>
 <div class="win hidden" id="winDeath">
   <div class="title"><span>Aviso</span></div>
-  <div class="body"><p style="margin:8px 0 12px">Você foi derrotado.<br><small>Perde 5% do zeny que carrega.</small></p><button id="btnRevive">Voltar à cidade</button></div>
+  <div class="body"><p style="margin:8px 0 12px">Você foi derrotado.<br><small>Perde 5% dos cobres que carrega.</small></p><button id="btnRevive">Voltar ao vilarejo</button></div>
 </div>
 <div id="tip" class="hidden"></div>
 
 <div id="title">
   <div id="logo">VALHEN</div>
-  <div id="sub">CRÔNICAS DOS CAMPOS DE GELIM</div>
+  <div id="sub">UMA NOVA VIDA NUM VILAREJO DE OUTRO MUNDO</div>
   <div class="win" id="titleBox" style="position:relative">
     <div class="title"><span>Entrar no mundo</span></div>
     <div class="body">
@@ -255,6 +255,10 @@ function scaledURL(c,s=2){const o=canvas(c.width*s,c.height*s),q=o.getContext('2
 const OUT='#22161e';
 const R={
   pink:['#a8385a','#e0688a','#ff9cb6','#ffd8e4'],
+  teal:['#1e5a5a','#2f8a84','#5cc0b0','#c8f4e8'],
+  hare:['#5a3a22','#8e6440','#bf9466','#e8cca4'],
+  straw:['#6e5018','#a8822e','#d4ae4c','#f0d888'],
+  log:['#3e2614','#5e3c20','#7e5530','#a07444'],
   green:['#2f6e2a','#5aa83e','#94d468','#d8f8b8'],
   gold:['#9a6410','#d89c22','#ffd24a','#fff4b8'],
   white:['#8e93ad','#c9cde0','#eceef8','#ffffff'],
@@ -277,24 +281,23 @@ const R={
 // =====================================================================
 // Sprites procedurais
 // =====================================================================
-function sprSlime(ramp,f,crown){
-  const w=20,h=crown?23:17,c=canvas(w,h),q=c.getContext('2d'),p=P(q);
+function sprSlime(ramp,f,sprout){
+  const w=20,h=sprout?21:17,c=canvas(w,h),q=c.getContext('2d'),p=P(q);
   const sq=[0,1,2,1][f],rx=8+sq*.6,ry=6.5-sq*.7,cy=h-1-ry+.5;
   blob(q,10,cy,rx,ry,ramp);
   const top=Math.round(cy-ry);
   p(6,top+2,2,1,ramp[3]);p(5,top+3,1,2,ramp[3]);
   const ey=Math.round(cy)-1;
   p(7,ey,1,2,OUT);p(12,ey,1,2,OUT);p(9,ey+2,2,1,OUT);
-  p(5,ey+2,2,1,'#ff7898');p(13,ey+2,2,1,'#ff7898');
-  if(crown){const ct=top-5;p(6,ct+2,8,3,'#f0b820');p(6,ct+1,1,1,'#f0b820');p(9,ct,2,2,'#f0b820');p(13,ct+1,1,1,'#f0b820');p(7,ct+2,6,1,'#ffe070');p(9,ct+3,2,1,'#e0283a')}
+  if(sprout){const st=top-4;p(10,st+1,1,4,'#3a6a1e');p(7,st,3,2,'#6ab83a');p(8,st,1,1,'#a8e070');p(11,st-1,3,2,'#6ab83a');p(12,st-1,1,1,'#a8e070')}
   return outline(c);
 }
 function sprBunny(f){
-  const c=canvas(17,24),q=c.getContext('2d'),p=P(q),yo=[0,-2,-3,-1][f]+3,W=R.white;
-  blob(q,6,5+yo,1.6,5,W);blob(q,9.5,4+yo,1.6,5,W);
-  p(6,3+yo,1,4,'#f4a0b8');p(9,2+yo,1,4,'#f4a0b8');
+  const c=canvas(17,24),q=c.getContext('2d'),p=P(q),yo=[0,-2,-3,-1][f]+3,W=R.hare;
+  blob(q,6,6+yo,1.4,3.6,W);blob(q,12.5,6+yo,1.4,3.6,W);
+  const A='#e8dcc0',a=(x,y,w,h)=>p(x,y+yo,w,h,A);a(8,1,1,6);a(7,1,1,1);a(9,2,2,1);a(11,0,1,6);a(10,0,1,1);a(12,1,2,1);
   blob(q,8,15+yo,6,4.3,W);blob(q,10,10.5+yo,4.6,3.8,W);blob(q,2.5,14+yo,1.8,1.8,W);
-  p(12,9+yo,1,2,'#c0203a');p(14,11+yo,1,1,'#f080a0');
+  p(12,9+yo,1,2,OUT);p(14,11+yo,1,1,'#5a3a22');blob(q,8,16.5+yo,3,1.6,['#e8dcc0','#f4ecd8','#fff8ec','#ffffff']);
   p(4,19+yo,3,1,W[1]);p(10,19+yo,3,1,W[1]);
   return outline(c,'#3a3448');
 }
@@ -303,9 +306,9 @@ function sprMush(f){
   p(4,19,3,2,'#6a4430');p(10,19,3,2,'#6a4430');
   p(5,12+yo,8,8-yo,'#f0dcb4');p(11,12+yo,2,8-yo,'#c8b08a');
   p(7,14+yo,1,2,OUT);p(10,14+yo,1,2,OUT);p(6,17+yo,1,1,'#f0a090');p(11,17+yo,1,1,'#f0a090');
-  blob(q,9,10+yo,8.5,6.5,R.red,{maxY:11+yo});
-  p(2,12+yo,14,1,'#7a1a20');
-  p(5,6+yo,2,2,'#fff');p(10,4+yo,2,2,'#fff');p(13,8+yo,2,1,'#fff');p(8,9+yo,1,1,'#fff');p(3,9+yo,1,1,'#fff');
+  blob(q,9,10+yo,8.5,6.5,R.purple,{maxY:11+yo});
+  p(2,12+yo,14,1,'#2a1040');
+  p(4,8+yo,10,1,'#e8c84a');p(6,5+yo,6,1,'#e8c84a');
   return outline(c);
 }
 function sprBeetle(f){
@@ -407,14 +410,35 @@ function sprTree(kind){
 }
 function sprRock(){const c=canvas(17,12),q=c.getContext('2d');blob(q,9,7,7.5,4.5,R.rock);blob(q,3,9,2.6,2,R.rock);return outline(c,'#1e1c22')}
 function sprBush(){const c=canvas(19,13),q=c.getContext('2d'),p=P(q);blob(q,9.5,7,9,5.5,R.leaf);for(const[x,y]of[[5,5],[11,4],[14,8],[8,9]]){p(x,y,2,2,'#e03a4a');p(x,y,1,1,'#ff9aa0')}return outline(c,'#0f2614')}
-function sprFountain(){
-  const c=canvas(56,40),q=c.getContext('2d'),p=P(q);
-  blob(q,28,29,26,10,R.stone);blob(q,28,28,21,7,R.water);
-  p(25,10,6,18,R.stone[1]);p(25,10,2,18,R.stone[2]);p(30,10,1,18,R.stone[0]);
-  blob(q,28,10,8,3,R.stone);blob(q,28,9,5,1.6,R.water);
+function sprWell(){
+  const c=canvas(40,46),q=c.getContext('2d'),p=P(q);
+  blob(q,20,34,17,8,R.stone);blob(q,20,32,12,5,['#10243a','#16304a','#1e3c58','#2a4c6c']);
+  p(5,10,3,26,'#5e3c20');p(32,10,3,26,'#5e3c20');p(6,10,1,26,'#8e6034');p(33,10,1,26,'#8e6034');
+  for(let k=0;k<9;k++){const col=R.straw[k%2?1:2];p(2+k*4-0,2+Math.abs(4-k),5,3,col)}
+  p(1,9,38,2,R.straw[0]);p(8,15,24,2,'#4a2e18');p(19,17,1,8,'#c8b898');p(17,24,5,4,'#7e5530');p(17,24,5,1,'#a07444');
   return outline(c,'#1e1c22');
 }
-function sprLamp(){const c=canvas(9,36),q=c.getContext('2d'),p=P(q);p(3,9,3,24,'#2e2c36');p(4,9,1,24,'#4a4858');p(1,32,7,3,'#2e2c36');p(1,2,7,8,'#2e2c36');p(2,3,5,6,'#ffe08a');p(3,4,2,3,'#fffbe0');p(2,0,5,2,'#2e2c36');return outline(c)}
+function sprHay(){const c=canvas(18,14),q=c.getContext('2d'),p=P(q);blob(q,9,7.5,8.5,6,R.straw);for(let k=0;k<7;k++)p(2+k*2,3+(k%3),1,6,R.straw[1]);p(1,7,16,1,'#8a5a20');return outline(c,'#3a2a10')}
+function sprCrop(k){
+  const c=canvas(26,16),q=c.getContext('2d'),p=P(q);
+  for(let r=0;r<3;r++){const y=4+r*4,x0=3+r*3;
+    for(let i=0;i<4;i++){const x=x0+i*5;
+      if(k===0){p(x,y-3,1,4,'#5a9a2a');p(x+1,y-5,1,3,'#e0c050');p(x-1,y-4,1,2,'#d4ae4c')}
+      else if(k===1){blob(q,x+1,y-1,2.4,2,R.leaf);p(x,y-2,1,1,'#b8e080')}
+      else{p(x,y-2,1,3,'#3a7a2a');p(x+1,y-3,1,2,'#4f9a42');p(x,y+1,2,1,'#e07a2a')}
+    }
+  }
+  return c;
+}
+function sprCart(){
+  const c=canvas(30,22),q=c.getContext('2d'),p=P(q);
+  p(2,6,24,8,'#8e6034');p(2,6,24,2,'#b48250');p(2,12,24,2,'#5e3c20');p(26,10,4,2,'#5e3c20');
+  for(let k=0;k<4;k++)blob(q,6+k*5,5,2.6,2.2,k%2?R.orange:R.leaf);
+  blob(q,8,16,4.5,4.5,['#3e2614','#5e3c20','#7e5530','#a07444']);blob(q,8,16,1.5,1.5,['#3e2614','#3e2614','#5e3c20','#5e3c20']);
+  blob(q,21,16,4.5,4.5,['#3e2614','#5e3c20','#7e5530','#a07444']);blob(q,21,16,1.5,1.5,['#3e2614','#3e2614','#5e3c20','#5e3c20']);
+  return outline(c);
+}
+function sprLamp(){const c=canvas(9,36),q=c.getContext('2d'),p=P(q);p(3,9,3,24,'#5e3c20');p(4,9,1,24,'#8e6034');p(1,32,7,3,'#4a2e18');p(1,2,7,8,'#2e2c36');p(2,3,5,6,'#ffe08a');p(3,4,2,3,'#fffbe0');p(2,0,5,2,'#2e2c36');return outline(c)}
 function sprStall(){
   const c=canvas(38,34),q=c.getContext('2d'),p=P(q);
   p(3,10,2,22,'#6a4426');p(33,10,2,22,'#6a4426');
@@ -441,6 +465,7 @@ function sprBuilding(o){
     if(o.win!==false&&h<=WH)for(let k=0;k<len;k++){const cu=k+.5;if(face===o.door&&Math.abs(cu-o.doorAt)<1)continue;const du=Math.abs(u-cu);if(du<.22&&h>=wy0&&h<=wy1){if(du>.15||h<wy0+1||h>wy1-1)return FRAME;return h>wy1-3&&u<cu?GLASSL:GLASS}}
     const st=o.wall||'timber';
     if(st==='stone'||h<3){const row=Math.floor(h/5),off=(row%2)*5,hh=hash2(Math.floor((U+off)/10),row,7);if(h%5<1||(U+off)%10<1)return MORT;return mul(STONE,.88+hh*.24)}
+    if(st==='log'){const lg=Math.floor(U/4),f=U%4;return mul(hex(R.log[f<1?0:f<2.5?2:1]),.9+hash2(lg,0,5)*.25)}
     if(st==='timber'&&(U%16<1.5||U>len*16-1.5||(h>WH-2.5&&h<=WH)||(Math.abs(h-Math.round(WH*.3))<.6)))return BEAM;
     if(st==='plaster'&&(U<1.5||U>len*16-1.5))return mul(STONE,.95);
     return mul(WALL,.95+hash2(U|0,h|0,3)*.08);
@@ -499,11 +524,11 @@ function sprIcon(k){
     case'herb':blob(q,3.5,6,2.6,4.5,R.leaf);blob(q,8.5,6,2.6,4.5,R.leaf);blob(q,6,4,2.4,4,R.leaf);p(6,7,1,5,'#3a6e2a');break;
     case'wing':blob(q,4,6,3.6,5,R.white);blob(q,8,6,3.6,5,R.white);p(6,3,1,8,'#8a8070');break;
     case'wing_b':blob(q,3.5,4,3.4,3.4,R.blue);blob(q,8.5,4,3.4,3.4,R.blue);blob(q,4,9,2.6,2.4,R.blue);blob(q,8,9,2.6,2.4,R.blue);p(6,2,1,9,'#2a2030');p(5,0,1,2,'#2a2030');p(7,0,1,2,'#2a2030');break;
-    case'jelly':blob(q,6,7.5,5.5,3.8,R.pink);p(3,5,2,1,'#fff');break;
+    case'jelly':blob(q,6,7.5,5.5,3.8,R.teal);p(3,5,2,1,'#fff');break;
     case'fluff':blob(q,6,7,5,4,R.white);blob(q,4,5,3,2.6,R.white);blob(q,8,5,3,2.6,R.white);break;
     case'spore':blob(q,3,8,2.4,2.4,R.brown);blob(q,7,4,2.8,2.8,R.brown);blob(q,9,9,2.2,2.2,R.brown);break;
     case'shell':blob(q,6,6,5.5,5,R.beetle);p(6,1,1,10,R.beetle[0]);break;
-    case'crown':p(1,5,10,6,'#f0b820');p(1,3,1,2,'#f0b820');p(5,1,2,4,'#f0b820');p(10,3,1,2,'#f0b820');p(2,6,8,1,'#ffe070');p(5,8,2,2,'#e0283a');p(1,10,10,1,'#a87010');break;
+    case'crown':blob(q,4,5,3.4,3.2,R.teal);blob(q,8,5,3.4,3.2,R.teal);for(let y=6;y<12;y++){const w=Math.max(0,11-y);p(6-w*.6,y,Math.max(1,w*1.2),1,y<9?R.teal[1]:R.teal[0])}p(3,3,2,1,'#fff');break;
     case'knife':line(p,2,10,8,4,'#e6ecf6');line(p,3,10,9,4,'#8a93ad');p(1,8,3,3,'#e0b040');p(0,11,2,1,'#6a4426');break;
     case'dagger':line(p,2,10,9,3,'#ffffff');line(p,3,10,10,3,'#7a84a0');p(1,8,3,3,'#3a90d0');p(0,11,2,1,'#6a4426');break;
     case'sword_t':blade('#c89a60','#8e6034','#6b4426');break;
@@ -517,7 +542,7 @@ function sprIcon(k){
     case'mace2':line(p,1,11,7,5,'#4a2e18');blob(q,8.5,3.5,3.2,3.2,R.rock);p(8,0,1,1,'#3a3a44');p(11,3,1,1,'#3a3a44');p(5,3,1,1,'#3a3a44');p(8,7,1,1,'#3a3a44');break;
     case'shirt':p(2,2,8,9,'#e8e0c8');p(0,2,2,4,'#e8e0c8');p(10,2,2,4,'#e8e0c8');p(8,2,2,9,'#bcb094');p(4,2,4,1,'#8a7a5a');break;
     case'mail':p(2,2,8,9,'#a8b0c0');p(0,2,2,4,'#a8b0c0');p(10,2,2,4,'#a8b0c0');p(8,2,2,9,'#707888');for(let y=3;y<11;y+=2)p(3,y,5,1,'#c8d0e0');break;
-    case'card':p(2,0,8,12,'#f0e0b0');p(2,0,8,1,'#a07840');p(2,11,8,1,'#a07840');p(2,0,1,12,'#a07840');p(9,0,1,12,'#a07840');p(3,2,6,5,'#8ab0d8');p(5,4,2,2,'#ff7898');p(3,8,6,1,'#a08060');p(3,10,4,1,'#a08060');break;
+    case'card':for(let y=0;y<12;y++){const w=y<5?y+1:Math.max(0,11-y);p(6-w,y,w*2,1,y<5?'#c8a8ff':'#8a5ad8');if(w>1)p(6-w,y,1,1,'#f0e4ff')}p(5,3,2,3,'#ffffff');break;
     // habilidades físicas
     case's_forca':blob(q,6,6.5,5,4.5,R.skin);p(2,4,8,1,'#c08060');p(4,4,1,3,'#c08060');p(7,4,1,3,'#c08060');p(1,9,10,2,'#c83434');break;
     case's_destreza':blob(q,6,6,5.5,5.5,R.red);blob(q,6,6,3.6,3.6,R.white);blob(q,6,6,1.8,1.8,R.red);line(p,11,0,6,6,'#3a2a1a');break;
@@ -606,13 +631,13 @@ function sfx(type){
 // =====================================================================
 // Mundo
 // =====================================================================
-const N=96,C=48,CW=13,TW=32,TH=16,OXW=N*TW/2,GW=N*TW,GH=N*TH+TH;
+const N=96,C=48,CW=10,TW=32,TH=16,OXW=N*TW/2,GW=N*TW,GH=N*TH+TH;
 const T_GRASS=0,T_GRASS2=1,T_DIRT=2,T_SAND=3,T_WATER=4,T_STONE=5;
 const ground=new Uint8Array(N*N),block=new Uint8Array(N*N),reach=new Uint8Array(N*N);
 const gi=(x,y)=>y*N+x,inb=(x,y)=>x>=0&&y>=0&&x<N&&y<N;
 const walkable=(x,y)=>inb(x,y)&&ground[gi(x,y)]!==T_WATER&&!block[gi(x,y)];
 const objects=[];
-// cidade: quadrado de C-CW até C+CW-1 (a última volta é a muralha)
+// vilarejo: quadrado de C-CW até C+CW-1 (a última volta é a paliçada)
 const inCityTile=(x,y)=>x>=C-CW&&x<C+CW&&y>=C-CW&&y<C+CW;
 const inCity=(px,py)=>inCityTile(Math.floor(px),Math.floor(py));
 const cheb=(x,y)=>Math.max(Math.abs(x+.5-C),Math.abs(y+.5-C));
@@ -624,62 +649,64 @@ function addBox(kind,bx,by,fw,fh,sp,extra){
   const ob=Object.assign({kind,x:bx+fw/2,y:by+fh/2,box:{bx,by,fw,fh},spr:sp.c,ax:sp.ax,ay:sp.ay,mc:sp.mc,vx:bx+fw,vy:by+fh},extra||{});
   objects.push(ob);for(let y=by;y<by+fh;y++)for(let x=bx;x<bx+fw;x++)block[gi(x,y)]=1;return ob;
 }
-// prédios da cidade (posição relativa ao centro)
+// casas do vilarejo (posição relativa ao centro)
 const BUILDINGS=[
-  {id:'guild',name:'Guilda dos Aventureiros',bx:3,by:-11,spec:{fw:5,fh:4,wh:30,rh:26,roof:'gable',rr:R.blue,wall:'timber',door:'L',doorAt:1.5,sign:'sign_guild'}},
-  {id:'school',name:'Escola de Armas',bx:-7,by:-11,spec:{fw:4,fh:3,wh:26,rh:20,roof:'gable',rr:R.red,wall:'timber',door:'L',doorAt:1.5,sign:'sword'}},
-  {id:'tower',name:'Torre Arcana',bx:-11,by:-11,spec:{fw:3,fh:3,wh:54,rh:34,roof:'pyr',rr:R.purple,wall:'stone',door:'L',doorAt:1.5,ov:.25,wy:30,wsz:10,sign:'sign_magic'}},
-  {id:'chapel',name:'Capela',bx:-11,by:3,spec:{fw:4,fh:4,wh:28,rh:24,roof:'gable',rr:R.cyan,wall:'plaster',wc:'#f6f2ea',door:'R',doorAt:2,sign:'a_cura'}},
-  {id:'h1',bx:9,by:-11,spec:{fw:3,fh:3,wh:22,rh:18,roof:'gable',rr:R.brown,wall:'timber',door:'L',doorAt:1.5}},
-  {id:'h2',bx:9,by:-7,spec:{fw:3,fh:3,wh:22,rh:16,roof:'gable',rr:R.red,wall:'stone',door:'L',doorAt:1.5}},
-  {id:'h3',bx:6,by:4,spec:{fw:3,fh:3,wh:22,rh:18,roof:'gable',rr:R.orange,wall:'timber',door:'L',doorAt:1.5}},
-  {id:'h4',bx:5,by:9,spec:{fw:4,fh:3,wh:22,rh:18,roof:'gable',rr:R.leaf,wall:'timber',door:'L',doorAt:2.5}},
-  {id:'h5',bx:-11,by:8,spec:{fw:3,fh:3,wh:22,rh:18,roof:'gable',rr:R.brown,wall:'stone',door:'R',doorAt:1.5}},
-  {id:'h6',bx:-7,by:8,spec:{fw:3,fh:3,wh:22,rh:18,roof:'gable',rr:R.blue,wall:'timber',door:'L',doorAt:1.5}},
+  {id:'guild',name:'Posto da Guilda',bx:2,by:-9,spec:{fw:4,fh:3,wh:24,rh:20,roof:'gable',rr:R.straw,wall:'timber',door:'L',doorAt:1.5,sign:'sign_guild'}},
+  {id:'school',name:'Galpão de Treino',bx:-6,by:-9,spec:{fw:3,fh:3,wh:22,rh:18,roof:'gable',rr:R.red,wall:'log',door:'L',doorAt:1.5,win:false,sign:'sword'}},
+  {id:'tower',name:'Cabana da Sábia',bx:-10+1,by:-9,spec:{fw:3,fh:3,wh:20,rh:24,roof:'pyr',rr:R.purple,wall:'stone',door:'L',doorAt:1.5,ov:.3,sign:'sign_magic'}},
+  {id:'chapel',name:'Capelinha',bx:-9,by:1,spec:{fw:3,fh:3,wh:24,rh:20,roof:'gable',rr:R.straw,wall:'plaster',wc:'#f6f2ea',door:'R',doorAt:1.5,sign:'a_cura'}},
+  {id:'h1',bx:6,by:-9,spec:{fw:3,fh:3,wh:20,rh:16,roof:'gable',rr:R.straw,wall:'timber',door:'L',doorAt:1.5}},
+  {id:'h2',bx:5,by:3,spec:{fw:3,fh:3,wh:20,rh:16,roof:'gable',rr:R.brown,wall:'plaster',wc:'#efe2c8',door:'L',doorAt:1.5}},
+  {id:'h3',bx:-9,by:6,spec:{fw:3,fh:3,wh:20,rh:16,roof:'gable',rr:R.straw,wall:'timber',door:'R',doorAt:1.5}},
 ];
 function genMap(){
   ground.fill(0);block.fill(0);objects.length=0;
   for(let y=0;y<N;y++)for(let x=0;x<N;x++){
     let t=fbm(x*.13,y*.13,11)>.6?T_GRASS2:T_GRASS;
     const w=fbm(x*.07+3,y*.07+5,23);
-    if(cheb(x,y)>16){if(w>.64)t=T_WATER;else if(w>.6)t=T_SAND}
+    if(cheb(x,y)>14){if(w>.64)t=T_WATER;else if(w>.6)t=T_SAND}
     ground[gi(x,y)]=t;
   }
-  // praça e ruas de pedra
-  for(let y=0;y<N;y++)for(let x=0;x<N;x++)if(inCityTile(x,y)){const ax=Math.abs(x+.5-C),ay=Math.abs(y+.5-C);if(Math.max(ax,ay)<5||ax<2||ay<2)ground[gi(x,y)]=T_STONE}
-  // estradas de terra saindo dos portões
+  // largo de terra em volta do poço e trilhas de terra
+  for(let y=0;y<N;y++)for(let x=0;x<N;x++)if(inCityTile(x,y)){const ax=Math.abs(x+.5-C),ay=Math.abs(y+.5-C);if(Math.max(ax,ay)<3||ax<1.2||ay<1.2)ground[gi(x,y)]=T_DIRT}
+  // estradas de terra saindo das porteiras
   [[1,0],[-1,0],[0,1],[0,-1]].forEach(([dx,dy],k)=>{
-    let px=C+dx*5,py=C+dy*5;
+    let px=C+dx*3,py=C+dy*3;
     for(let s=0;s<N;s++){
       const x=Math.round(px),y=Math.round(py);
-      for(let a=-1;a<=0;a++){const tx=x+(dy?a:0),ty=y+(dx?a:0);if(inb(tx,ty)&&ground[gi(tx,ty)]!==T_STONE)ground[gi(tx,ty)]=T_DIRT}
+      for(let a=-1;a<=0;a++){const tx=x+(dy?a:0),ty=y+(dx?a:0);if(inb(tx,ty))ground[gi(tx,ty)]=T_DIRT}
       px+=dx;py+=dy;if(!inCityTile(Math.round(px),Math.round(py))){const wig=(vnoise(s*.15,k*10,77)-.5)*1.1;if(dx)py+=wig*.5;else px+=wig*.5}
       if(px<0||py<0||px>=N||py>=N)break;
     }
   });
-  // muralha com 4 portões e torres
+  // paliçada de troncos com 4 porteiras
   for(let i=C-CW;i<C+CW;i++)for(const[x,y]of[[i,C-CW],[i,C+CW-1],[C-CW,i],[C+CW-1,i]]){
     if(block[gi(x,y)])continue;
-    const along=(y===C-CW||y===C+CW-1)?x:y;if(along>=C-2&&along<=C+1)continue;
-    const corner=(x===C-CW||x===C+CW-1)&&(y===C-CW||y===C+CW-1),tower=corner||along===C-3||along===C+2;
-    ground[gi(x,y)]=T_STONE;addBox('wall',x,y,1,1,tower?SPR.tower:(along%2?SPR.wallA:SPR.wallB));
+    const along=(y===C-CW||y===C+CW-1)?x:y;if(along>=C-1&&along<=C)continue;
+    const corner=(x===C-CW||x===C+CW-1)&&(y===C-CW||y===C+CW-1),post=corner||along===C-2||along===C+1;
+    addBox('wall',x,y,1,1,post?SPR.post:(along%2?SPR.fenceA:SPR.fenceB));
   }
-  objects.push({kind:'fountain',x:C,y:C,spr:SPR.fountain});
+  objects.push({kind:'well',x:C,y:C,spr:SPR.well});
   for(const[a,b]of[[C-1,C-1],[C,C-1],[C-1,C],[C,C]])block[gi(a,b)]=1;
-  for(const[a,b]of[[C-6,C-6],[C+5,C-6],[C-6,C+5],[C+5,C+5],[C+2,C-10],[C-3,C+9],[C+9,C+2],[C-10,C-3]])addObj('lamp',a,b,{spr:SPR.lamp});
-  addObj('stall',C+4,C-4,{spr:SPR.stall});
-  addObj('barrel',C+2,C-5,{spr:SPR.barrel});addObj('barrel',C+5,C-2,{spr:SPR.barrel});addObj('barrel',C+8,C+3,{spr:SPR.barrel});
-  addObj('dummy',C-9,C-5,{spr:SPR.dummy});addObj('dummy',C-7,C-5,{spr:SPR.dummy});
+  for(const[a,b]of[[C-3,C-3],[C+2,C+2],[C+2,C-3],[C-3,C+2]])addObj('lamp',a,b,{spr:SPR.lamp});
+  addObj('stall',C+4,C-3,{spr:SPR.stall});
+  addObj('barrel',C+6,C-3,{spr:SPR.barrel});addObj('barrel',C+2,C-5,{spr:SPR.barrel});
+  addObj('dummy',C-7,C-4,{spr:SPR.dummy});addObj('dummy',C-5,C-4,{spr:SPR.dummy});
   for(const b of BUILDINGS)addBox('bld',C+b.bx,C+b.by,b.spec.fw,b.spec.fh,SPR.bld[b.id],{name:b.name});
-  for(const[a,b]of[[C+10,C+5],[C+10,C+9],[C+11,C+11],[C-4,C+11],[C+11,C-3]])addObj('tree',a,b,{spr:pick(SPR.trees.blossom)});
-  for(const[a,b]of[[C-4,C+5],[C+7,C-6],[C-11,C-6]])addObj('bush',a,b,{spr:SPR.bush});
+  // hortas, feno e uma carroça
+  for(let y=C+5;y<=C+8;y++)for(let x=C+2;x<=C+7;x++){if(block[gi(x,y)])continue;ground[gi(x,y)]=T_DIRT;if((x+y)%1===0)addObj('crop',x,y,{spr:SPR.crops[(x*7+y*3)%3]})}
+  for(let y=C-6;y<=C-5;y++)for(let x=C+6;x<=C+8;x++){ground[gi(x,y)]=T_DIRT;addObj('crop',x,y,{spr:SPR.crops[(x+y)%3]})}
+  for(const[a,b]of[[C-8,C-1],[C-7,C-2],[C+8,C+1],[C-4,C+5]])addObj('hay',a,b,{spr:SPR.hay});
+  addObj('cart',C+3,C+1,{spr:SPR.cart});
+  for(const[a,b]of[[C-5,C+7],[C+8,C-1],[C-9,C-3],[C-3,C+8]])addObj('tree',a,b,{spr:pick(SPR.trees.oak)});
+  for(const[a,b]of[[C-3,C-7],[C+4,C+2],[C-6,C+5]])addObj('bush',a,b,{spr:SPR.bush});
   const canPut=(x,y)=>{const t=ground[gi(x,y)];return(t===T_GRASS||t===T_GRASS2)&&!block[gi(x,y)]};
   for(let y=0;y<N;y++)for(let x=0;x<N;x++){
     if(!canPut(x,y))continue;
     const edge=Math.min(x,y,N-1-x,N-1-y),dc=cheb(x,y);
     const treeKind=()=>{const v=vnoise(x*.09,y*.09,91);return v>.62?'pine':v<.3?'blossom':'oak'};
     if(edge<2){if(edge===0||Math.random()<.85)addObj('tree',x,y,{spr:pick(SPR.trees[treeKind()])});continue}
-    if(dc<15.5)continue;
+    if(dc<11.5)continue;
     const f=fbm(x*.1+9,y*.1+2,37);
     if(f>.6&&dc>18&&Math.random()<.55)addObj('tree',x,y,{spr:pick(SPR.trees[treeKind()])});
     else if(Math.random()<.022)addObj('tree',x,y,{spr:pick(SPR.trees[treeKind()])});
@@ -722,7 +749,7 @@ function buildGround(){
   groundC=c;
   miniBase=canvas(184,96);const mq=miniBase.getContext('2d');mq.imageSmoothingEnabled=true;mq.drawImage(c,0,0,GW,GH,0,0,184,96);
   mq.fillStyle='#1c4020';for(const o of objects)if(o.kind==='tree'){const s=iso(o.x,o.y);mq.fillRect(s.x*184/GW-1,s.y*96/GH-1,2,2)}
-  for(const o of objects)if(o.box){const b=o.box;mq.fillStyle=o.kind==='wall'?'#4a4650':o.mc;for(let y=b.by;y<b.by+b.fh;y++)for(let x=b.bx;x<b.bx+b.fw;x++){const s=iso(x+.5,y+.5);mq.fillRect(s.x*184/GW-1,s.y*96/GH-1,2,2)}}
+  for(const o of objects)if(o.box){const b=o.box;mq.fillStyle=o.kind==='wall'?'#6b4426':o.mc;for(let y=b.by;y<b.by+b.fh;y++)for(let x=b.bx;x<b.bx+b.fw;x++){const s=iso(x+.5,y+.5);mq.fillRect(s.x*184/GW-1,s.y*96/GH-1,2,2)}}
 }
 
 // =====================================================================
@@ -764,9 +791,9 @@ const ACTIVE={
   investida:{name:'Investida',icon:'spear',price:2200,req:['lanca',8],weapon:'lanca',sp:10,cd:5,range:5,dash:true,power:1.9,desc:'Avança contra o alvo de até 5 quadros e o perfura.'},
   racha:{name:'Racha-Crânio',icon:'axe',price:2200,req:['machado',8],weapon:'machado',sp:12,cd:5,power:2.7,desc:'Um golpe devastador de machado.'},
   atordoar:{name:'Pancada Atordoante',icon:'mace',price:2200,req:['maca',8],weapon:'maca',sp:10,cd:6,power:1.4,stun:2.2,desc:'Golpe que atordoa o alvo por 2 segundos.'},
-  flecha_fogo:{name:'Flecha de Fogo',icon:'e_fogo',el:'fogo',price:400,req:['fogo',0],sp:6,cd:1.2,cast:.6,power:1.25,range:7,desc:'Dispara uma flecha flamejante.'},
-  bola_fogo:{name:'Bola de Fogo',icon:'e_fogo',el:'fogo',price:3000,req:['fogo',15],sp:16,cd:4,cast:1.2,power:1.6,aoe:1.7,range:7,desc:'Explode e atinge todos perto do alvo.'},
-  lanca_gelo:{name:'Lança de Gelo',icon:'e_agua',el:'agua',price:400,req:['agua',0],sp:7,cd:1.5,cast:.7,power:1.15,slow:3,range:7,desc:'Perfura e deixa o alvo lento por 3 segundos.'},
+  flecha_fogo:{name:'Fagulha',icon:'e_fogo',el:'fogo',price:400,req:['fogo',0],sp:6,cd:1.2,cast:.6,power:1.25,range:7,desc:'Arremessa uma fagulha que queima o alvo.'},
+  bola_fogo:{name:'Explosão Ígnea',icon:'e_fogo',el:'fogo',price:3000,req:['fogo',15],sp:16,cd:4,cast:1.2,power:1.6,aoe:1.7,range:7,desc:'Explode e atinge todos perto do alvo.'},
+  lanca_gelo:{name:'Estilhaço de Gelo',icon:'e_agua',el:'agua',price:400,req:['agua',0],sp:7,cd:1.5,cast:.7,power:1.15,slow:3,range:7,desc:'Perfura e deixa o alvo lento por 3 segundos.'},
   maremoto:{name:'Maremoto',icon:'e_agua',el:'agua',price:3500,req:['agua',20],sp:18,cd:5,cast:1.3,power:1.5,aoe:2,slow:3,range:6,desc:'Onda que atinge e deixa lentos todos perto do alvo.'},
   pedrada:{name:'Pedrada',icon:'e_terra',el:'terra',price:400,req:['terra',0],sp:8,cd:1.8,cast:.9,power:1.55,range:6,desc:'Arremessa uma rocha pesada.'},
   vento:{name:'Lâmina de Vento',icon:'e_ar',el:'ar',price:400,req:['ar',0],sp:5,cd:.8,cast:.35,power:.95,range:8,desc:'Corte de vento muito rápido, de longo alcance.'},
@@ -778,7 +805,7 @@ const ACTIVE={
 const ALLSK=Object.assign({},PASSIVE,ACTIVE);
 function skName(id){return ALLSK[id].name}
 // ninguém nasce sabendo: habilidades ativas são aprendidas com instrutores, pagando
-const TRAINER={f:{id:'trainer_f',name:'Mestre Brann',place:'Escola de Armas'},m:{id:'trainer_m',name:'Arquimaga Yselda',place:'Torre Arcana'}};
+const TRAINER={f:{id:'trainer_f',name:'Mestre Brann',place:'Galpão de Treino'},m:{id:'trainer_m',name:'Sábia Yselda',place:'Cabana da Sábia'}};
 const teacher=id=>ACTIVE[id].el?TRAINER.m:TRAINER.f;
 function unlocked(id){return me.learned.includes(id)}
 function reqMet(id){const r=ACTIVE[id].req;return me.L[r[0]]>=r[1]}
@@ -787,19 +814,19 @@ function reqMet(id){const r=ACTIVE[id].req;return me.L[r[0]]>=r[1]}
 // Itens e monstros
 // =====================================================================
 const ITEMS={
-  pocao_v:{name:'Poção Vermelha',type:'use',icon:'potion_r',price:50,heal:50,desc:'Recupera 50 HP.'},
-  pocao_l:{name:'Poção Laranja',type:'use',icon:'potion_o',price:200,heal:130,desc:'Recupera 130 HP.'},
-  pocao_a:{name:'Poção Azul',type:'use',icon:'potion_b',price:400,sp:50,desc:'Recupera 50 SP.'},
+  pocao_v:{name:'Tônico de Ervas',type:'use',icon:'potion_r',price:50,heal:50,desc:'Recupera 50 HP.'},
+  pocao_l:{name:'Elixir de Mel',type:'use',icon:'potion_o',price:200,heal:130,desc:'Recupera 130 HP.'},
+  pocao_a:{name:'Orvalho da Lua',type:'use',icon:'potion_b',price:400,sp:50,desc:'Recupera 50 SP.'},
   maca:{name:'Maçã',type:'use',icon:'apple',price:16,heal:18,desc:'Uma maçã suculenta. Recupera 18 HP.'},
   cenoura:{name:'Cenoura',type:'use',icon:'carrot',price:20,heal:24,desc:'Crocante. Recupera 24 HP.'},
-  erva:{name:'Erva Verde',type:'use',icon:'herb',price:12,heal:10,sp:4,desc:'Recupera 10 HP e 4 SP.'},
-  asa_mosca:{name:'Asa de Mosca',type:'use',icon:'wing',price:60,tele:'rand',desc:'Teleporta para um lugar aleatório do mapa.'},
-  asa_borb:{name:'Asa de Borboleta',type:'use',icon:'wing_b',price:300,tele:'town',desc:'Leva você de volta à cidade.'},
-  geleia:{name:'Geleia',type:'etc',icon:'jelly',price:8,desc:'Pegajosa. Vale alguns zenys.'},
-  felpa:{name:'Felpa',type:'etc',icon:'fluff',price:22,desc:'Pelo macio de Coelhunar.'},
-  esporo:{name:'Esporo',type:'etc',icon:'spore',price:36,desc:'Solta um pó que faz espirrar.'},
-  casca:{name:'Casca Dura',type:'etc',icon:'shell',price:70,desc:'Carapaça brilhante de besouro.'},
-  coroa:{name:'Coroa de Geleia',type:'etc',icon:'crown',price:6000,desc:'Troféu do Rei Gelim. Vale uma fortuna.'},
+  erva:{name:'Folha de Sálvia',type:'use',icon:'herb',price:12,heal:10,sp:4,desc:'Recupera 10 HP e 4 SP.'},
+  asa_mosca:{name:'Pena Errante',type:'use',icon:'wing',price:60,tele:'rand',desc:'Solta ao vento, leva você para um lugar qualquer dos campos.'},
+  asa_borb:{name:'Pena de Pombo-Correio',type:'use',icon:'wing_b',price:300,tele:'town',desc:'Leva você de volta ao vilarejo.'},
+  geleia:{name:'Gota de Lodo',type:'etc',icon:'jelly',price:8,desc:'Gosmenta. Vale uns trocados.'},
+  felpa:{name:'Tufo de Pelo',type:'etc',icon:'fluff',price:22,desc:'Pelo macio de Lebre-Galhuda.'},
+  esporo:{name:'Pó de Chapéu',type:'etc',icon:'spore',price:36,desc:'Pó que cai do Chapéu-Pulante. Faz espirrar.'},
+  casca:{name:'Carapaça de Besouro',type:'etc',icon:'shell',price:70,desc:'Dura e brilhante. Os ferreiros gostam.'},
+  coroa:{name:'Coração de Lodo',type:'etc',icon:'crown',price:6000,desc:'O núcleo pulsante do Lodo Ancião. Vale uma fortuna.'},
   faca:{name:'Faca',type:'weapon',wt:'adaga',icon:'knife',atk:6,req:0,price:60,blade:'#dfe6f2'},
   adaga2:{name:'Adaga Afiada',type:'weapon',wt:'adaga',icon:'dagger',atk:24,req:15,price:1800,blade:'#ffffff',bladeD:'#7a84a0'},
   espada_t:{name:'Espada de Treino',type:'weapon',wt:'espada',icon:'sword_t',atk:10,req:0,price:150,blade:'#c89a60',bladeD:'#8e6034'},
@@ -813,35 +840,35 @@ const ITEMS={
   maca2:{name:'Maça Cravejada',type:'weapon',wt:'maca',icon:'mace2',atk:37,req:15,price:2800},
   roupa:{name:'Camisa de Algodão',type:'armor',icon:'shirt',def:2,price:80,desc:'DEF +2'},
   cota:{name:'Cota Acolchoada',type:'armor',icon:'mail',def:8,price:1400,desc:'DEF +8'},
-  carta_gelim:{name:'Carta Gelim',type:'card',icon:'card',bonus:{hp:60},price:20,desc:'Usar: HP máx. +60 para sempre.'},
-  carta_gelimv:{name:'Carta Gelim Verde',type:'card',icon:'card',bonus:{resistencia:3},price:20,desc:'Usar: Resistência +3 (bônus permanente).'},
-  carta_coelho:{name:'Carta Coelhunar',type:'card',icon:'card',bonus:{agilidade:3},price:20,desc:'Usar: Agilidade +3 (bônus permanente).'},
-  carta_cogumelo:{name:'Carta Cogumelo',type:'card',icon:'card',bonus:{def:3},price:20,desc:'Usar: DEF +3 para sempre.'},
-  carta_besouro:{name:'Carta Besouro',type:'card',icon:'card',bonus:{atk:12},price:20,desc:'Usar: ATK +12 para sempre.'},
-  carta_rei:{name:'Carta Rei Gelim',type:'card',icon:'card',bonus:{forca:3,destreza:3,agilidade:3,resistencia:3,inteligencia:3},price:20,desc:'Usar: todas as habilidades físicas +3 (bônus permanente).'},
+  carta_gelim:{name:'Essência de Lodinho',type:'card',icon:'card',bonus:{hp:60},price:20,desc:'Absorver: HP máx. +60 para sempre.'},
+  carta_gelimv:{name:'Essência de Lodo Musgoso',type:'card',icon:'card',bonus:{resistencia:3},price:20,desc:'Absorver: Resistência +3 (bônus permanente).'},
+  carta_coelho:{name:'Essência de Lebre-Galhuda',type:'card',icon:'card',bonus:{agilidade:3},price:20,desc:'Absorver: Agilidade +3 (bônus permanente).'},
+  carta_cogumelo:{name:'Essência de Chapéu-Pulante',type:'card',icon:'card',bonus:{def:3},price:20,desc:'Absorver: DEF +3 para sempre.'},
+  carta_besouro:{name:'Essência de Besouro-Arado',type:'card',icon:'card',bonus:{atk:12},price:20,desc:'Absorver: ATK +12 para sempre.'},
+  carta_rei:{name:'Essência do Lodo Ancião',type:'card',icon:'card',bonus:{forca:3,destreza:3,agilidade:3,resistencia:3,inteligencia:3},price:20,desc:'Absorver: todas as habilidades físicas +3 (bônus permanente).'},
 };
 for(const k in ITEMS){const it=ITEMS[k];if(it.type==='weapon')it.desc=`${WNAME[it.wt]} · ATK +${it.atk}`+(it.req?` · Requer ${WNAME[it.wt]} ${it.req}`:'')}
 const SHOP=['pocao_v','pocao_l','pocao_a','asa_mosca','asa_borb','roupa','cota','faca','espada_t','lanca','machado','maca','adaga2','espada','lanca2','machado2','maca2'];
 const MON={
-  gelim:{name:'Gelim',lv:2,el:'agua',hp:40,atk:[3,6],def:0,hit:4,flee:2,speed:2,adelay:1.7,spr:'slime',ramp:'pink',respawn:8,drops:[['geleia',.7],['maca',.2],['pocao_v',.04],['carta_gelim',.01]]},
-  gelimv:{name:'Gelim Verde',lv:6,el:'terra',hp:85,atk:[7,11],def:1,hit:12,flee:8,speed:2,adelay:1.6,spr:'slime',ramp:'green',respawn:10,drops:[['geleia',.6],['erva',.35],['pocao_v',.06],['carta_gelimv',.01]]},
-  coelho:{name:'Coelhunar',lv:7,el:'ar',hp:110,atk:[8,12],def:1,hit:16,flee:12,speed:3.4,adelay:1.4,spr:'bunny',respawn:12,drops:[['felpa',.6],['cenoura',.3],['carta_coelho',.01]]},
-  cogumelo:{name:'Cogumelo Saltador',lv:12,el:'sombras',hp:190,atk:[12,18],def:3,hit:24,flee:10,speed:1.8,adelay:1.8,spr:'mush',respawn:14,drops:[['esporo',.6],['pocao_v',.12],['pocao_l',.04],['carta_cogumelo',.01]]},
-  besouro:{name:'Besouro Chifrudo',lv:24,el:'fogo',hp:420,atk:[24,32],def:9,hit:42,flee:24,speed:2.8,adelay:1.5,aggro:true,spr:'beetle',respawn:16,drops:[['casca',.55],['pocao_l',.1],['espada',.03],['carta_besouro',.01]]},
-  rei:{name:'Rei Gelim',lv:45,el:'agua',hp:3000,atk:[38,55],def:14,hit:80,flee:30,speed:2.4,adelay:1.3,aggro:true,boss:true,spr:'slime',ramp:'gold',crown:true,scale:2,respawn:180,drops:[['coroa',1],['pocao_l',1],['pocao_l',.6],['lamina',.25],['carta_rei',.15]]},
+  gelim:{name:'Lodinho',lv:2,el:'agua',hp:40,atk:[3,6],def:0,hit:4,flee:2,speed:2,adelay:1.7,spr:'slime',ramp:'teal',sprout:true,respawn:8,drops:[['geleia',.7],['maca',.2],['pocao_v',.04],['carta_gelim',.01]]},
+  gelimv:{name:'Lodo Musgoso',lv:6,el:'terra',hp:85,atk:[7,11],def:1,hit:12,flee:8,speed:2,adelay:1.6,spr:'slime',ramp:'green',respawn:10,drops:[['geleia',.6],['erva',.35],['pocao_v',.06],['carta_gelimv',.01]]},
+  coelho:{name:'Lebre-Galhuda',lv:7,el:'ar',hp:110,atk:[8,12],def:1,hit:16,flee:12,speed:3.4,adelay:1.4,spr:'bunny',respawn:12,drops:[['felpa',.6],['cenoura',.3],['carta_coelho',.01]]},
+  cogumelo:{name:'Chapéu-Pulante',lv:12,el:'sombras',hp:190,atk:[12,18],def:3,hit:24,flee:10,speed:1.8,adelay:1.8,spr:'mush',respawn:14,drops:[['esporo',.6],['pocao_v',.12],['pocao_l',.04],['carta_cogumelo',.01]]},
+  besouro:{name:'Besouro-Arado',lv:24,el:'fogo',hp:420,atk:[24,32],def:9,hit:42,flee:24,speed:2.8,adelay:1.5,aggro:true,spr:'beetle',respawn:16,drops:[['casca',.55],['pocao_l',.1],['espada',.03],['carta_besouro',.01]]},
+  rei:{name:'Lodo Ancião',lv:45,el:'agua',hp:3000,atk:[38,55],def:14,hit:80,flee:30,speed:2.4,adelay:1.3,aggro:true,boss:true,spr:'slime',ramp:'gold',sprout:true,scale:2,respawn:180,drops:[['coroa',1],['pocao_l',1],['pocao_l',.6],['lamina',.25],['carta_rei',.15]]},
 };
-// área inicial: só 3 tipos (Gelim perto dos portões, Coelhunar no meio, Cogumelo nas bordas)
-const SPAWNS=[['gelim',26,15,30],['coelho',22,24,46],['cogumelo',20,36,68]];
+// área inicial: só 3 tipos (Lodinho perto do vilarejo, Lebre-Galhuda no meio, Chapéu-Pulante nas bordas)
+const SPAWNS=[['gelim',26,13,28],['coelho',22,24,46],['cogumelo',20,36,68]];
 
 // missões da Guilda dos Aventureiros
 const QUESTS={
-  g_gelim:{name:'Praga de Gelim',rank:0,pts:1,desc:'Os Gelim estão comendo as hortas perto dos portões.',kill:{gelim:8},rew:{zeny:250,items:[['pocao_v',3]]}},
-  g_geleia:{name:'Geleia para o Alquimista',rank:0,pts:1,rep:true,desc:'O alquimista usa geleia nas poções. Pedido repetível.',bring:{geleia:10},rew:{zeny:200}},
-  g_coelho:{name:'Coelhunares Ariscos',rank:1,pts:2,desc:'Coelhunares estão roubando cenouras das carroças.',kill:{coelho:8},rew:{zeny:600,items:[['pocao_l',2]]}},
-  g_felpa:{name:'Felpa para a Tecelã',rank:1,pts:1,rep:true,desc:'A tecelã paga bem por felpa macia. Pedido repetível.',bring:{felpa:8},rew:{zeny:450}},
-  g_cogumelo:{name:'Esporos no Bosque',rank:2,pts:3,desc:'Cogumelos Saltadores estão espalhando esporos pelas bordas dos campos.',kill:{cogumelo:10},rew:{zeny:1200,items:[['cota',1]]}},
-  g_esporo:{name:'Esporos para o Herbalista',rank:2,pts:1,rep:true,desc:'O herbalista estuda os esporos. Pedido repetível.',bring:{esporo:6},rew:{zeny:600,items:[['pocao_a',1]]}},
-  g_cacada:{name:'Grande Caçada',rank:2,pts:4,desc:'A guilda quer limpar os campos de uma vez.',kill:{gelim:6,coelho:6,cogumelo:6},rew:{zeny:2500,items:[['asa_borb',2],['pocao_l',3]]}},
+  g_gelim:{name:'Lodo na Horta',rank:0,pts:1,desc:'Os Lodinhos estão comendo as hortas em volta do vilarejo.',kill:{gelim:8},rew:{zeny:250,items:[['pocao_v',3]]}},
+  g_geleia:{name:'Gotas para a Boticária',rank:0,pts:1,rep:true,desc:'A boticária usa gotas de lodo nos tônicos. Pedido repetível.',bring:{geleia:10},rew:{zeny:200}},
+  g_coelho:{name:'Lebres Atrevidas',rank:1,pts:2,desc:'As Lebres-Galhudas estão roubando cenouras das carroças.',kill:{coelho:8},rew:{zeny:600,items:[['pocao_l',2]]}},
+  g_felpa:{name:'Pelo para a Tecelã',rank:1,pts:1,rep:true,desc:'A tecelã paga bem por pelo macio. Pedido repetível.',bring:{felpa:8},rew:{zeny:450}},
+  g_cogumelo:{name:'Chapéus no Bosque',rank:2,pts:3,desc:'Os Chapéus-Pulantes estão espalhando pó pelas bordas dos campos.',kill:{cogumelo:10},rew:{zeny:1200,items:[['cota',1]]}},
+  g_esporo:{name:'Pó para o Herbalista',rank:2,pts:1,rep:true,desc:'O herbalista estuda o pó dos chapéus. Pedido repetível.',bring:{esporo:6},rew:{zeny:600,items:[['pocao_a',1]]}},
+  g_cacada:{name:'Grande Caçada',rank:2,pts:4,desc:'O posto da guilda quer limpar os campos de uma vez.',kill:{gelim:6,coelho:6,cogumelo:6},rew:{zeny:2500,items:[['asa_borb',2],['pocao_l',3]]}},
 };
 const RANKS=[['F',0],['E',3],['D',7],['C',14]];
 const MAXQ=3;
@@ -966,7 +993,7 @@ function stepMove(e,dt){
 // Monstros, NPCs, itens
 // =====================================================================
 function randSpawnTile(r0,r1){
-  for(let k=0;k<800;k++){const x=irand(1,N-2),y=irand(1,N-2),d=dist(x+.5,y+.5,C,C);if(d<r0||d>r1)continue;if(cheb(x,y)<15)continue;if(!reach[gi(x,y)])continue;if(ground[gi(x,y)]===T_STONE)continue;return{x,y}}
+  for(let k=0;k<800;k++){const x=irand(1,N-2),y=irand(1,N-2),d=dist(x+.5,y+.5,C,C);if(d<r0||d>r1)continue;if(cheb(x,y)<12)continue;if(!reach[gi(x,y)])continue;if(ground[gi(x,y)]===T_STONE)continue;return{x,y}}
   return{x:C,y:C+20};
 }
 function makeMon(kind,r0,r1){
@@ -978,7 +1005,7 @@ function respawnMon(m){Object.assign(m,makeMon(m.kind,m.r0,m.r1))}
 function monSprite(m){
   const d=m.def,fr=m.stunT>0?0:Math.floor(m.anim*(m.moving?8:3))%4;
   return cached('m_'+m.kind+fr,()=>{
-    let c;if(d.spr==='slime')c=sprSlime(R[d.ramp],fr,d.crown);else if(d.spr==='bunny')c=sprBunny(fr);else if(d.spr==='mush')c=sprMush(fr);else c=sprBeetle(fr);
+    let c;if(d.spr==='slime')c=sprSlime(R[d.ramp],fr,d.sprout);else if(d.spr==='bunny')c=sprBunny(fr);else if(d.spr==='mush')c=sprMush(fr);else c=sprBeetle(fr);
     if(d.scale){const s=canvas(c.width*d.scale,c.height*d.scale),q=s.getContext('2d');q.imageSmoothingEnabled=false;q.drawImage(c,0,0,s.width,s.height);c=s}
     return c;});
 }
@@ -1034,7 +1061,7 @@ function monAttack(m){
 }
 function die(){me.hp=0;me.dead=true;me.target=null;me.path=[];me.sit=false;me.cast=null;sfx('die');$('winDeath').classList.remove('hidden');msg('Você foi derrotado...','#ff8080')}
 function revive(){
-  const lost=Math.floor(me.zeny*.05);me.zeny-=lost;if(lost)msg(`Você perdeu ${fmt(lost)} zenys.`,'#ffb0b0');
+  const lost=Math.floor(me.zeny*.05);me.zeny-=lost;if(lost)msg(`Você perdeu ${fmt(lost)} cobres.`,'#ffb0b0');
   me.dead=false;me.hp=Math.floor(me.maxHp*.5);me.sp=Math.floor(me.maxSp*.5);me.x=C+.5;me.y=C+3.5;me.path=[];
   for(const m of monsters)if(m.target===me){m.target=null;m.path=[]}
   $('winDeath').classList.add('hidden');fx.push({type:'pillar',ent:me,t:0,dur:.8,col:'#9ad0ff'});save();
@@ -1107,7 +1134,7 @@ function remItem(id,n=1){const e=me.inv.find(i=>i.id===id);if(!e)return false;e.
 function useItem(id){
   if(me.dead)return;const it=ITEMS[id];if(!it||!invCount(id))return;
   if(it.type==='weapon'||it.type==='armor'){equip(id);return}
-  if(it.type==='card'){remItem(id);me.cards.push(id);calc();sfx('card');fx.push({type:'pillar',ent:me,t:0,dur:1.4,col:'#ffd0ff'});msg(`${it.name} foi absorvida: ${it.desc.replace('Usar: ','')}`,'#f0b0ff');renderStats();renderSkills();return}
+  if(it.type==='card'){remItem(id);me.cards.push(id);calc();sfx('card');fx.push({type:'pillar',ent:me,t:0,dur:1.4,col:'#ffd0ff'});msg(`${it.name} foi absorvida: ${it.desc.replace('Absorver: ','')}`,'#f0b0ff');renderStats();renderSkills();return}
   if(it.type!=='use')return;
   if(it.heal||it.sp){remItem(id);healHero(it.heal||0,it.sp||0);return}
   if(it.tele){remItem(id);teleport(it.tele)}
@@ -1149,12 +1176,12 @@ function useSlot(i){
 function makeNPCs(){
   const mk=(id,name,lk,tx,ty,flip)=>({id,name,look:Object.assign(look(lk),{id:lk}),x:C+tx+.5,y:C+ty+.5,face:{flip:!!flip,front:true},anim:Math.random()*3});
   npcs=[
-    mk('healer','Irmã Liesel','priest',-7,6),
-    mk('merchant','Tomas, o Mercador','merchant',3,-2,true),
-    mk('guard','Capitão Rurik','guard',2,10),
-    mk('guild','Odila, da Guilda','guildm',5,-7),
-    mk('trainer_f','Mestre Brann','master',-5,-8),
-    mk('trainer_m','Arquimaga Yselda','mage',-9,-8),
+    mk('healer','Irmã Liesel','priest',-5,3),
+    mk('merchant','Tomas, o Vendeiro','merchant',3,-2,true),
+    mk('guard','Seu Bento, o Vigia','guard',-2,5),
+    mk('guild','Odila, do Posto da Guilda','guildm',4,-5),
+    mk('trainer_f','Mestre Brann','master',-4,-5),
+    mk('trainer_m','Sábia Yselda','mage',-8,-5),
   ];
   for(const n of npcs)block[gi(Math.floor(n.x),Math.floor(n.y))]=1;
 }
@@ -1168,13 +1195,13 @@ function talk(n){
   setFace(me,n.x-me.x,n.y-me.y);setFace(n,me.x-n.x,me.y-n.y);sfx('click');
   const bye={label:'Tchau'};
   if(n.id==='healer'){
-    dialog(n.name,'Que a luz de Valhen guie seus passos, aventureiro.<br>Deixe-me cuidar dos seus ferimentos e abençoar sua jornada.',[{label:'Aceitar a bênção',fn:()=>{
+    dialog(n.name,'Que a luz de Valhen guie seus passos, aventureiro.<br>Deixe-me cuidar dos seus ferimentos e rezar por sua jornada.',[{label:'Aceitar a prece',fn:()=>{
       me.buffs.bless=TIME+240;me.buffs.agi=TIME+240;calc();me.hp=me.maxHp;me.sp=me.maxSp;healHero(0,0);
-      fx.push({type:'pillar',ent:me,t:0,dur:1.2,col:'#fff0a0'});n.say={text:'Bênção! Aumentar Agilidade!',t:0};renderStats();renderBuffs()}},{label:'Agora não'}]);
+      fx.push({type:'pillar',ent:me,t:0,dur:1.2,col:'#fff0a0'});n.say={text:'Que os campos te protejam!',t:0};renderStats();renderBuffs()}},{label:'Agora não'}]);
   }else if(n.id==='merchant'){
-    dialog(n.name,'Olá, olá! Poções, asas e armas de todo tipo...<br>Cada arma treina uma habilidade diferente. E compro qualquer tralha que você trouxer dos campos!',[{label:'Comprar',fn:()=>openShop('buy')},{label:'Vender',fn:()=>openShop('sell')},bye]);
+    dialog(n.name,'Olá, olá! Tônicos, penas e armas de todo tipo...<br>Cada arma treina uma habilidade diferente. E compro qualquer tralha que você trouxer dos campos!',[{label:'Comprar',fn:()=>openShop('buy')},{label:'Vender',fn:()=>openShop('sell')},bye]);
   }else if(n.id==='guard'){
-    dialog(n.name,`Bem-vindo a Valhen, ${me.name}. Lá fora, perto dos portões, só há <b>Gelim</b>. Mais longe ficam os <b>Coelhunares</b>, e nas bordas dos campos, os <b>Cogumelos Saltadores</b>.<br><br>Quer trabalho? A <b>Guilda dos Aventureiros</b> fica ao norte da praça, à direita. A <b>Escola de Armas</b> e a <b>Torre Arcana</b>, à esquerda, ensinam técnicas a quem pagar. Dentro das muralhas, monstro nenhum entra.`,[bye]);
+    dialog(n.name,`Acordou, forasteiro? Achei você caído na beira da estrada, ${me.name}. Roupa esquisita, nome esquisito... mais um que veio de longe, de outro mundo, aposto.<br><br>Este é o <b>Vilarejo do Sabiá</b>. É pequeno, mas tem o que você precisa. Lá fora, perto da cerca, só há <b>Lodinhos</b>. Mais longe ficam as <b>Lebres-Galhudas</b>, e nas bordas dos campos, os <b>Chapéus-Pulantes</b>.<br><br>Quer trabalho? O <b>Posto da Guilda</b> fica ao norte do poço. O <b>Mestre Brann</b>, no galpão, e a <b>Sábia Yselda</b>, na cabana, ensinam técnicas a quem pagar. Dentro da cerca, monstro nenhum entra.`,[bye]);
   }else if(n.id==='guild'){
     const r=RANKS[rankOf()][0];
     dialog(n.name,`Bem-vindo à Guilda dos Aventureiros! Seu rank é <span class="rank">${r}</span>.<br>Pegue até ${MAXQ} missões do quadro e volte aqui para entregá-las. Missões concluídas dão pontos de guilda e sobem o seu rank.`,[{label:'Ver missões',fn:()=>openGuild(qAnyDone()?'mine':'board')},bye]);
@@ -1186,7 +1213,7 @@ function talk(n){
 }
 // ---------- aprender habilidades
 let learnKind='f';
-function openLearn(k){learnKind=k;$('learnTitle').textContent=k==='f'?'Escola de Armas · Mestre Brann':'Torre Arcana · Arquimaga Yselda';$('winLearn').classList.remove('hidden');renderLearn()}
+function openLearn(k){learnKind=k;$('learnTitle').textContent=k==='f'?'Galpão de Treino · Mestre Brann':'Cabana da Sábia · Sábia Yselda';$('winLearn').classList.remove('hidden');renderLearn()}
 function renderLearn(){
   if(!me||$('winLearn').classList.contains('hidden'))return;
   const ids=Object.keys(ACTIVE).filter(id=>learnKind==='m'?!!ACTIVE[id].el:!ACTIVE[id].el);
@@ -1194,15 +1221,15 @@ function renderLearn(){
   for(const id of ids){
     const s=ACTIVE[id],has=unlocked(id),ok=reqMet(id),pay=me.zeny>=s.price;
     const req=`<span class="${ok?'ok':'no'}" style="color:${ok?'#2a8a2a':'#a04040'}">Requer ${skName(s.req[0])} ${s.req[1]}</span>${s.weapon?` · ${s.weapon==='desarmado'?'sem arma':WNAME[s.weapon]}`:''}`;
-    h+=`<div class="shopi" data-tip="${esc(skTip(id))}"><img src="${iconURL(s.icon)}"><span class="nm">${s.name}<small style="color:#6a7698">${req}</small></span>${has?'<span class="pr" style="color:#2a8a2a">Aprendida</span>':`<span class="pr">${fmt(s.price)}z</span><button data-learn="${id}" ${ok&&pay?'':'disabled'}>Aprender</button>`}</div>`;
+    h+=`<div class="shopi" data-tip="${esc(skTip(id))}"><img src="${iconURL(s.icon)}"><span class="nm">${s.name}<small style="color:#6a7698">${req}</small></span>${has?'<span class="pr" style="color:#2a8a2a">Aprendida</span>':`<span class="pr">${fmt(s.price)}c</span><button data-learn="${id}" ${ok&&pay?'':'disabled'}>Aprender</button>`}</div>`;
   }
-  h+=`</div><div style="margin-top:6px">Seu zeny: <b>${fmt(me.zeny)}</b></div>`;
+  h+=`</div><div style="margin-top:6px">Seus cobres: <b>${fmt(me.zeny)}</b></div>`;
   $('learnBody').innerHTML=h;if(curCursor)$('learnBody').querySelectorAll('button').forEach(e=>e.style.cursor=curCursor);
 }
 function learn(id){
   const s=ACTIVE[id];if(unlocked(id)||!reqMet(id)||me.zeny<s.price)return;
   me.zeny-=s.price;me.learned.push(id);sfx('lvl');fx.push({type:'pillar',ent:me,t:0,dur:1.2,col:s.el?ELC[s.el]:'#ffd0a0'});
-  msg(`Você aprendeu ${s.name}! (−${fmt(s.price)}z)`,'#ffc0ff');
+  msg(`Você aprendeu ${s.name}! (−${fmt(s.price)}c)`,'#ffc0ff');
   const i=hot.findIndex(h=>!h);if(i>=0&&!hot.some(h=>h&&h.type==='skill'&&h.id===id)){hot[i]={type:'skill',id};msg(`${s.name} foi colocada no atalho F${i+1}.`,'#c8d8ff')}
   renderLearn();renderSkills();renderHot();save();
 }
@@ -1218,7 +1245,7 @@ function qObj(id){const q=QUESTS[id],st=me.quests.active[id],o=[];
   if(q.bring)for(const k in q.bring)o.push(`${ITEMS[k].name} ${st?Math.min(invCount(k),q.bring[k]):invCount(k)}/${q.bring[k]}`);
   return o.join(' · ')}
 function qGoal(id){const q=QUESTS[id],o=[];if(q.kill)for(const k in q.kill)o.push(`derrote ${q.kill[k]} ${MON[k].name}`);if(q.bring)for(const k in q.bring)o.push(`traga ${q.bring[k]} ${ITEMS[k].name}`);const t=o.join(', ');return t[0].toUpperCase()+t.slice(1)}
-function qRew(id){const r=QUESTS[id].rew,o=[];if(r.zeny)o.push(fmt(r.zeny)+'z');for(const[k,n]of r.items||[])o.push(`${n}x ${ITEMS[k].name}`);o.push(`${QUESTS[id].pts} ponto${QUESTS[id].pts>1?'s':''}`);return o.join(', ')}
+function qRew(id){const r=QUESTS[id].rew,o=[];if(r.zeny)o.push(fmt(r.zeny)+'c');for(const[k,n]of r.items||[])o.push(`${n}x ${ITEMS[k].name}`);o.push(`${QUESTS[id].pts} ponto${QUESTS[id].pts>1?'s':''}`);return o.join(', ')}
 let guildTab='board';
 function openGuild(t){guildTab=t||guildTab;$('winGuild').classList.remove('hidden');renderGuild()}
 function renderGuild(){
@@ -1357,7 +1384,7 @@ function updHero(dt){
   if(me.regT>=(me.sit?2:4)){me.regT=0;if(me.hp<me.maxHp){const a=Math.max(1,Math.floor(me.maxHp/60)+Math.floor(me.E('resistencia')/6));me.hp=Math.min(me.maxHp,me.hp+Math.round(a*(me.sit?1.5:1)))}}
   if(me.sregT>=(me.sit?2.5:5)){me.sregT=0;if(me.sp<me.maxSp)me.sp=Math.min(me.maxSp,me.sp+1+Math.floor(me.E('inteligencia')/8)+Math.floor(me.maxSp/100))}
   let ch=false;for(const k in me.buffs)if(TIME>me.buffs[k]){delete me.buffs[k];ch=true}
-  if(ch){calc();renderStats();renderBuffs();msg('O efeito da bênção acabou.','#c0c8e0')}
+  if(ch){calc();renderStats();renderBuffs();msg('O efeito da prece acabou.','#c0c8e0')}
 }
 function updMon(m,dt){
   if(m.dead){m.deadT+=dt;if(m.deadT>m.def.respawn)respawnMon(m);return}
@@ -1451,9 +1478,9 @@ function render(){
       if(o.kind==='bld'&&behind(me,o.box)){const hs=scr(me);if(hs.x>x+4&&hs.x<x+o.spr.width-4&&hs.y>y&&hs.y-28<y+o.spr.height)al=.5}
       if(al<1)g.globalAlpha=al;g.drawImage(o.spr,x,y);g.globalAlpha=1;
     }else if(it.k==='obj'){
-      if(o.kind==='tree')g.drawImage(SPR.shBig,s.x-14,s.y-6);else if(o.kind!=='fountain'&&o.kind!=='lamp')g.drawImage(SPR.shMed,s.x-9,s.y-4);
+      if(o.kind==='tree')g.drawImage(SPR.shBig,s.x-14,s.y-6);else if(o.kind!=='well'&&o.kind!=='lamp'&&o.kind!=='crop')g.drawImage(SPR.shMed,s.x-9,s.y-4);
       let al=1;if(o.kind==='tree'&&it.d>me.x+me.y){const hs=scr(me);if(Math.abs(hs.x-s.x)<18&&hs.y<s.y&&hs.y>s.y-50)al=.45}
-      drawSpr(o.spr,s.x,s.y+(o.kind==='fountain'?12:2),false,al);
+      drawSpr(o.spr,s.x,s.y+(o.kind==='well'?10:2),false,al);
       if(o.kind==='lamp'){g.globalAlpha=.12+.04*Math.sin(TIME*6+o.x);g.fillStyle='#ffe08a';g.beginPath();g.arc(s.x,s.y-30,10,0,7);g.fill();g.globalAlpha=1}
     }else if(it.k==='item'){
       const ic=SPR.icons[ITEMS[o.id].icon],bob=o.t<.4?Math.round(-Math.sin(o.t/.4*Math.PI)*8):0;
@@ -1527,11 +1554,11 @@ document.addEventListener('mouseup',()=>drag=null);
 document.addEventListener('mouseover',e=>{const t=e.target.closest('[data-tip]');const tp=$('tip');if(t){tp.innerHTML=t.dataset.tip;tp.classList.remove('hidden')}else tp.classList.add('hidden')});
 const esc=s=>s.replace(/"/g,'&quot;');
 function iconURL(k){return cached('url_'+k,()=>scaledURL(SPR.icons[k],2))}
-function itemTip(id){const it=ITEMS[id];const sell=Math.floor(it.price/2);return`<b>${it.name}</b><br>${it.desc}<br><small style="color:#888">Venda: ${fmt(sell)}z</small>`}
+function itemTip(id){const it=ITEMS[id];const sell=Math.floor(it.price/2);return`<b>${it.name}</b><br>${it.desc}<br><small style="color:#888">Venda: ${fmt(sell)}c</small>`}
 function skTip(id){
   const s=ALLSK[id],L=me.L[id],xp=me.xp[id],nx=L<100?XPT[L+1]:null,bon=me.bon[id]||0;
   let t=`<b>${s.name}</b> · Nível ${L}${bon?` <span style="color:#2a8a2a">(+${bon})</span>`:''}<br>${s.desc}`;
-  if(ACTIVE[id]){const a=ACTIVE[id];t+=`<br>SP: ${skillCost(id)} · Recarga: ${a.cd}s${a.cast?` · Conjuração: ${(a.cast*me.castMul).toFixed(1)}s`:''}${a.range?` · Alcance: ${a.range}`:''}<br>Requer: ${skName(a.req[0])} ${a.req[1]}${a.weapon?` · ${a.weapon==='desarmado'?'sem arma':WNAME[a.weapon]}`:''}<br>${unlocked(id)?'<i>Fica mais forte e mais barata conforme sobe de nível.</i>':`<span style="color:#a04040">Não aprendida. ${teacher(id).name} (${teacher(id).place}) ensina por ${fmt(a.price)}z.</span>`}`}
+  if(ACTIVE[id]){const a=ACTIVE[id];t+=`<br>SP: ${skillCost(id)} · Recarga: ${a.cd}s${a.cast?` · Conjuração: ${(a.cast*me.castMul).toFixed(1)}s`:''}${a.range?` · Alcance: ${a.range}`:''}<br>Requer: ${skName(a.req[0])} ${a.req[1]}${a.weapon?` · ${a.weapon==='desarmado'?'sem arma':WNAME[a.weapon]}`:''}<br>${unlocked(id)?'<i>Fica mais forte e mais barata conforme sobe de nível.</i>':`<span style="color:#a04040">Não aprendida. ${teacher(id).name} (${teacher(id).place}) ensina por ${fmt(a.price)}c.</span>`}`}
   else t+=`<br><i>Como treinar: ${s.train}</i>`;
   t+=`<br><small style="color:#888">XP: ${fmt(xp)}${nx?` / ${fmt(nx)} (faltam ${fmt(nx-xp)})`:' (máximo)'}</small>`;
   return t;
@@ -1545,7 +1572,7 @@ function renderStats(){
   ${r('ATK',me.atk)}${r('MATK',me.matk)}${r('DEF',me.def)}${r('HIT',me.hit)}
   ${r('FLEE',me.flee)}${r('CRIT',me.crit+'%')}${r('ASPD',me.aspd)}${r('Conjuração',Math.round(me.castMul*100)+'%')}
   ${r('Arma',WNAME[wtype()])}${r('Alcance',me.range>2?'2 quadros':'1 quadro')}</div>
-  <div style="margin-top:8px;font-size:10px;color:#6a7698;line-height:14px">Os números vêm das habilidades. Força → ATK · Destreza → HIT, CRIT, conjuração · Agilidade → FLEE, ASPD · Resistência → HP, DEF · Inteligência → SP, MATK.<br>Cartas usadas: ${me.cards.length}</div>`;
+  <div style="margin-top:8px;font-size:10px;color:#6a7698;line-height:14px">Os números vêm das habilidades. Força → ATK · Destreza → HIT, CRIT, conjuração · Agilidade → FLEE, ASPD · Resistência → HP, DEF · Inteligência → SP, MATK.<br>Essências absorvidas: ${me.cards.length}</div>`;
 }
 let invTab='all';
 function renderInv(){
@@ -1556,7 +1583,7 @@ function renderInv(){
   h+=`</div><div class="tabs" style="margin-top:6px">${tabs.map(([k,l])=>`<button data-tab="${k}" class="${invTab===k?'on':''}">${l}</button>`).join('')}</div><div class="grid">`;
   const f=it=>invTab==='all'||(invTab==='use'&&(it.type==='use'||it.type==='card'))||(invTab==='equip'&&(it.type==='weapon'||it.type==='armor'))||(invTab==='etc'&&it.type==='etc');
   for(const e of me.inv){const it=ITEMS[e.id];if(!f(it))continue;const lock=it.req&&me.L[it.wt]<it.req;h+=`<div class="slot" draggable="true" data-item="${e.id}" style="${lock?'opacity:.5':''}" data-tip="${esc(itemTip(e.id))}<br><i>Duplo clique para ${it.type==='etc'?'—':it.type==='weapon'||it.type==='armor'?'equipar':'usar'}</i>"><img src="${iconURL(it.icon)}"><span class="n">${e.n}</span></div>`}
-  h+=`</div><div style="margin-top:6px;font-size:10px">Zeny: <b>${fmt(me.zeny)}</b></div>`;
+  h+=`</div><div style="margin-top:6px;font-size:10px">Cobres: <b>${fmt(me.zeny)}</b></div>`;
   $('invBody').innerHTML=h;
 }
 $('invBody').addEventListener('click',e=>{const t=e.target.closest('[data-tab]');if(t){invTab=t.dataset.tab;renderInv()}const u=e.target.closest('[data-uneq]');if(u){unequip(u.dataset.uneq);$('tip').classList.add('hidden')}});
@@ -1570,12 +1597,12 @@ function renderSkills(){
   const ids=skTab==='ativa'?Object.keys(ACTIVE):Object.keys(PASSIVE).filter(k=>PASSIVE[k].cat===skTab);
   for(const id of ids){
     const s=ALLSK[id],L=me.L[id],act=!!ACTIVE[id],lock=act&&!unlocked(id);
-    const sub=act?(lock?(reqMet(id)?`Aprenda na ${teacher(id).place} · ${fmt(s.price)}z`:`Requer ${skName(s.req[0])} ${s.req[1]} · ${teacher(id).place}`):`${s.el?ELN[s.el]:s.weapon?WNAME[s.weapon]:'Qualquer arma'} · SP ${skillCost(id)}`):(id===wtype()?'<span style="color:#2a8a2a">arma atual</span>':s.train);
+    const sub=act?(lock?(reqMet(id)?`Aprenda com ${teacher(id).name} · ${fmt(s.price)}c`:`Requer ${skName(s.req[0])} ${s.req[1]} · ${teacher(id).place}`):`${s.el?ELN[s.el]:s.weapon?WNAME[s.weapon]:'Qualquer arma'} · SP ${skillCost(id)}`):(id===wtype()?'<span style="color:#2a8a2a">arma atual</span>':s.train);
     h+=`<div class="skr ${act?'act':''} ${lock?'locked':''}" data-sk="${id}" ${act&&!lock?'draggable="true"':''} data-tip="${esc(skTip(id))}"><img src="${iconURL(s.icon)}"><div class="nm">${s.name}<small>${sub}</small><div class="xpb"><div data-xpb="${id}"></div></div></div><span class="lv">${L}</span></div>`;
   }
   h+='</div>';
   if(skTab==='elem')h+='<div style="margin-top:5px;font-size:10px;color:#6a7698">Água › Fogo › Terra › Ar › Água · Luz ⇄ Sombras</div>';
-  if(skTab==='ativa')h+='<div style="margin-top:5px;font-size:10px;color:#6a7698">Técnicas físicas: Escola de Armas. Magias: Torre Arcana. Arraste as aprendidas para a barra de atalhos; duplo clique usa.</div>';
+  if(skTab==='ativa')h+='<div style="margin-top:5px;font-size:10px;color:#6a7698">Técnicas físicas: Galpão de Treino. Magias: Cabana da Sábia. Arraste as aprendidas para a barra de atalhos; duplo clique usa.</div>';
   $('skillBody').innerHTML=h;updSkillBars();
   if(curCursor)$('skillBody').querySelectorAll('button,.skr').forEach(e=>e.style.cursor=curCursor);
 }
@@ -1600,22 +1627,22 @@ function renderHot(){
 function updCooldowns(){document.querySelectorAll('[data-cd]').forEach(e=>{const id=e.dataset.cd,left=(me.cd[id]||0)-TIME;e.style.height=left>0?(left/ACTIVE[id].cd*100)+'%':'0'})}
 function renderBuffs(){
   const b=$('buffs');b.innerHTML='';
-  for(const k in me.buffs){const left=Math.max(0,Math.ceil(me.buffs[k]-TIME));const nm=k==='bless'?'Bênção (Força, Destreza e Inteligência +5)':'Aumentar Agilidade (Agilidade +4, velocidade)';b.innerHTML+=`<div class="buff" data-tip="<b>${nm}</b><br>${left}s restantes"><img src="${iconURL(k==='bless'?'buff_bless':'buff_agi')}"><span>${left}</span></div>`}
+  for(const k in me.buffs){const left=Math.max(0,Math.ceil(me.buffs[k]-TIME));const nm=k==='bless'?'Prece do Campo (Força, Destreza e Inteligência +5)':'Passo Ligeiro (Agilidade +4, velocidade)';b.innerHTML+=`<div class="buff" data-tip="<b>${nm}</b><br>${left}s restantes"><img src="${iconURL(k==='bless'?'buff_bless':'buff_agi')}"><span>${left}</span></div>`}
 }
 let shopMode='buy';
 function openShop(m){shopMode=m;$('winShop').classList.remove('hidden');renderShop()}
 function renderShop(){
   let h=`<div class="tabs"><button data-sm="buy" class="${shopMode==='buy'?'on':''}">Comprar</button><button data-sm="sell" class="${shopMode==='sell'?'on':''}">Vender</button></div><div class="shopl">`;
-  if(shopMode==='buy')for(const id of SHOP){const it=ITEMS[id],lock=it.req&&me.L[it.wt]<it.req;h+=`<div class="shopi" data-tip="${esc(itemTip(id))}"><img src="${iconURL(it.icon)}"><span class="nm">${it.name}${it.type==='weapon'?`<small style="color:${lock?'#a04040':'#4a6a9a'}">${WNAME[it.wt]}${it.req?` ${it.req}`:''} · ATK ${it.atk}</small>`:''}</span><span class="pr">${fmt(it.price)}z</span><button data-buy="${id}" data-n="1" ${me.zeny>=it.price?'':'disabled'}>1</button>${it.type==='use'?`<button data-buy="${id}" data-n="10" ${me.zeny>=it.price*10?'':'disabled'}>10</button>`:''}</div>`}
+  if(shopMode==='buy')for(const id of SHOP){const it=ITEMS[id],lock=it.req&&me.L[it.wt]<it.req;h+=`<div class="shopi" data-tip="${esc(itemTip(id))}"><img src="${iconURL(it.icon)}"><span class="nm">${it.name}${it.type==='weapon'?`<small style="color:${lock?'#a04040':'#4a6a9a'}">${WNAME[it.wt]}${it.req?` ${it.req}`:''} · ATK ${it.atk}</small>`:''}</span><span class="pr">${fmt(it.price)}c</span><button data-buy="${id}" data-n="1" ${me.zeny>=it.price?'':'disabled'}>1</button>${it.type==='use'?`<button data-buy="${id}" data-n="10" ${me.zeny>=it.price*10?'':'disabled'}>10</button>`:''}</div>`}
   else{if(!me.inv.length)h+='<div style="padding:8px;color:#888">Nada para vender.</div>';
-    for(const e of me.inv){const it=ITEMS[e.id],pr=Math.floor(it.price/2);h+=`<div class="shopi"><img src="${iconURL(it.icon)}"><span class="nm">${it.name} <small style="color:#888">x${e.n}</small></span><span class="pr">${fmt(pr)}z</span><button data-sell="${e.id}" data-n="1">1</button><button data-sell="${e.id}" data-n="all">Todos</button></div>`}}
-  h+=`</div><div style="margin-top:6px">Seu zeny: <b>${fmt(me.zeny)}</b></div>`;
+    for(const e of me.inv){const it=ITEMS[e.id],pr=Math.floor(it.price/2);h+=`<div class="shopi"><img src="${iconURL(it.icon)}"><span class="nm">${it.name} <small style="color:#888">x${e.n}</small></span><span class="pr">${fmt(pr)}c</span><button data-sell="${e.id}" data-n="1">1</button><button data-sell="${e.id}" data-n="all">Todos</button></div>`}}
+  h+=`</div><div style="margin-top:6px">Seus cobres: <b>${fmt(me.zeny)}</b></div>`;
   $('shopBody').innerHTML=h;if(curCursor)$('shopBody').querySelectorAll('button').forEach(e=>e.style.cursor=curCursor);
 }
 $('shopBody').addEventListener('click',e=>{
   const t=e.target.closest('[data-sm]');if(t){shopMode=t.dataset.sm;renderShop();return}
-  const b=e.target.closest('[data-buy]');if(b){const id=b.dataset.buy,n=+b.dataset.n,c=ITEMS[id].price*n;if(me.zeny>=c){me.zeny-=c;addItem(id,n);sfx('coin');msg(`Comprou ${n}x ${ITEMS[id].name} por ${fmt(c)}z.`,'#ffe8a0')}renderShop();return}
-  const s=e.target.closest('[data-sell]');if(s){const id=s.dataset.sell,n=s.dataset.n==='all'?invCount(id):1,v=Math.floor(ITEMS[id].price/2)*n;if(remItem(id,n)){me.zeny+=v;sfx('coin');msg(`Vendeu ${n}x ${ITEMS[id].name} por ${fmt(v)}z.`,'#ffe8a0')}$('tip').classList.add('hidden');renderShop()}
+  const b=e.target.closest('[data-buy]');if(b){const id=b.dataset.buy,n=+b.dataset.n,c=ITEMS[id].price*n;if(me.zeny>=c){me.zeny-=c;addItem(id,n);sfx('coin');msg(`Comprou ${n}x ${ITEMS[id].name} por ${fmt(c)}c.`,'#ffe8a0')}renderShop();return}
+  const s=e.target.closest('[data-sell]');if(s){const id=s.dataset.sell,n=s.dataset.n==='all'?invCount(id):1,v=Math.floor(ITEMS[id].price/2)*n;if(remItem(id,n)){me.zeny+=v;sfx('coin');msg(`Vendeu ${n}x ${ITEMS[id].name} por ${fmt(v)}c.`,'#ffe8a0')}$('tip').classList.add('hidden');renderShop()}
 });
 $('btnRevive').onclick=revive;
 $('btnSound').onclick=()=>{muted=!muted;$('btnSound').textContent='Som: '+(muted?'off':'on')};
@@ -1626,7 +1653,7 @@ function refreshInfo(){
   $('spFill').style.width=(me.sp/me.maxSp*100)+'%';$('spTxt').textContent=`${Math.floor(me.sp)} / ${me.maxSp}`;
   if(me.last){const id=me.last,L=me.L[id],k=L>=100?1:(me.xp[id]-XPT[L])/(XPT[L+1]-XPT[L]);$('lastSk').textContent=`${skName(id)} Nv. ${L}`;$('lastSkP').textContent=(k*100).toFixed(1)+'%';$('lastSkB').style.width=(k*100)+'%'}
   $('zeny').textContent=fmt(me.zeny);
-  $('mapName').textContent=`${inCity(me.x,me.y)?'Cidade de Valhen':'Campos de Valhen'} (${Math.floor(me.x)}, ${Math.floor(me.y)})`;
+  $('mapName').textContent=`${inCity(me.x,me.y)?'Vilarejo do Sabiá':'Campos do Sabiá'} (${Math.floor(me.x)}, ${Math.floor(me.y)})`;
   updCooldowns();updSkillBars();
 }
 function drawMini(){
@@ -1651,15 +1678,15 @@ addEventListener('beforeunload',save);
 // =====================================================================
 function buildSprites(){
   SPR.trees={oak:[sprTree('oak'),sprTree('oak'),sprTree('oak'),sprTree('oak')],pine:[sprTree('pine'),sprTree('pine')],blossom:[sprTree('blossom'),sprTree('blossom')]};
-  SPR.rock=sprRock();SPR.bush=sprBush();SPR.fountain=sprFountain();SPR.lamp=sprLamp();SPR.stall=sprStall();SPR.barrel=sprBarrel();
+  SPR.rock=sprRock();SPR.bush=sprBush();SPR.well=sprWell();SPR.hay=sprHay();SPR.cart=sprCart();SPR.crops=[sprCrop(0),sprCrop(1),sprCrop(2)];SPR.lamp=sprLamp();SPR.stall=sprStall();SPR.barrel=sprBarrel();
   SPR.shBig=sprShadow(28,10);SPR.shMed=sprShadow(18,7);SPR.shSm=sprShadow(10,4);
   SPR.cell=sprCell('rgba(255,255,255,.7)');SPR.mark=sprCell('rgba(255,230,90,.35)',true);
   const keys=new Set();for(const k in ITEMS)keys.add(ITEMS[k].icon);for(const k in ALLSK)keys.add(ALLSK[k].icon);['buff_bless','buff_agi','sign_guild','sign_magic'].forEach(k=>keys.add(k));
   SPR.icons={};for(const k of keys)SPR.icons[k]=sprIcon(k);
   SPR.dummy=sprDummy();
-  SPR.wallA=sprBuilding({fw:1,fh:1,wh:22,roof:'flat',rr:R.stone,wall:'stone',win:false,noOutline:true});
-  SPR.wallB=sprBuilding({fw:1,fh:1,wh:18,roof:'flat',rr:R.stone,wall:'stone',win:false,noOutline:true});
-  SPR.tower=sprBuilding({fw:1,fh:1,wh:34,rh:14,roof:'pyr',ov:.12,rr:R.red,wall:'stone',win:false});
+  SPR.fenceA=sprBuilding({fw:1,fh:1,wh:14,roof:'flat',rr:R.log,wall:'log',win:false,noOutline:true});
+  SPR.fenceB=sprBuilding({fw:1,fh:1,wh:12,roof:'flat',rr:R.log,wall:'log',win:false,noOutline:true});
+  SPR.post=sprBuilding({fw:1,fh:1,wh:22,rh:8,roof:'pyr',ov:.05,rr:R.log,wall:'log',win:false});
   SPR.bld={};for(const b of BUILDINGS)SPR.bld[b.id]=sprBuilding(b.spec);
 }
 function startGame(data){
@@ -1668,10 +1695,11 @@ function startGame(data){
   monsters=[];for(const[k,n,r0,r1]of SPAWNS)for(let i=0;i<n;i++)monsters.push(makeMon(k,r0,r1));
   $('title').classList.add('hidden');started=true;
   renderHot();updQuest();refreshInfo();
-  msg('Bem-vindo a Valhen! Pressione H para ver os controles.','#ffe8a0');
+  if(!data.hot){msg('Você acorda deitado na grama, sem lembrar como chegou aqui. Este não é o seu mundo.','#ffe8a0');msg('Um velho vigia acena da estrada: é o Vilarejo do Sabiá.','#ffe8a0')}
+  msg('Pressione H para ver os controles.','#ffe8a0');
   msg('Aqui não há classes: tudo o que você usa fica mais forte. Abra as habilidades com S.','#c8d8ff');
-  msg('Você não sabe nenhuma técnica ou magia ainda. A Escola de Armas e a Torre Arcana ensinam, pagando.','#c8d8ff');
-  msg('Dica: pegue missões na Guilda dos Aventureiros, ao norte da praça.','#c8d8ff');
+  msg('Você não sabe nenhuma técnica ou magia ainda. O Mestre Brann (Galpão de Treino) e a Sábia Yselda (Cabana da Sábia) ensinam, pagando.','#c8d8ff');
+  msg('Dica: pegue missões no Posto da Guilda, ao norte do poço.','#c8d8ff');
   if(!data.hot)$('winHelp').classList.remove('hidden');
   setInterval(save,20000);
 }
