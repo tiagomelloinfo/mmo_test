@@ -718,7 +718,7 @@ const BUILDINGS=[
   {id:'school',name:'Galpão de Treino',room:'school',bx:-6,by:-10,spec:{fw:3,fh:3,wh:30,rh:22,roof:'gable',rr:R.red,wall:'log',door:'L',doorAt:1.5,win:false,sign:'sword'}},
   {id:'tavern',name:'Taverna do Caneco',room:'tavern',bx:2,by:-10,spec:{fw:4,fh:3,wh:32,rh:24,roof:'gable',rr:R.straw,wall:'timber',door:'L',doorAt:1.5,sign:'sign_tavern'}},
   {id:'shop',name:'Venda do Tomas',room:'shop',bx:8,by:-10,spec:{fw:3,fh:3,wh:28,rh:20,roof:'gable',rr:R.red,wall:'timber',door:'L',doorAt:1.5,sign:'potion_r'}},
-  {id:'chapel',name:'Capelinha',bx:-11,by:1,spec:{fw:3,fh:3,wh:32,rh:24,roof:'gable',rr:R.straw,wall:'plaster',wc:'#f6f2ea',door:'R',doorAt:1.5,sign:'a_cura'}},
+  {id:'chapel',name:'Capelinha',bx:-11,by:1,spec:{fw:3,fh:3,wh:32,rh:24,roof:'gable',rr:R.straw,wall:'plaster',wc:'#f6f2ea',door:'R',doorAt:1.5}},
   {id:'inn',name:'Hospedaria do Sabiá',room:'inn',bx:4,by:4,spec:{fw:4,fh:3,wh:30,rh:22,roof:'gable',rr:R.brown,wall:'plaster',wc:'#efe2c8',door:'L',doorAt:1.5,sign:'sign_inn'}},
   {id:'h3',bx:-11,by:7,spec:{fw:3,fh:3,wh:28,rh:20,roof:'gable',rr:R.straw,wall:'timber',door:'R',doorAt:1.5}},
 ];
@@ -1254,7 +1254,6 @@ function useSlot(i){
 function makeNPCs(){
   const mk=(id,name,lk,tx,ty,flip)=>({id,name,look:Object.assign(look(lk),{id:lk}),x:C+tx+.5,y:C+ty+.5,face:{flip:!!flip,front:true},anim:Math.random()*3});
   npcs=[
-    mk('healer','Irmã Liesel','priest',-7,3),
     mk('guard','Seu Bento, o Vigia','guard',2,12),
   ];
   for(const n of npcs)block[gi(Math.floor(n.x),Math.floor(n.y))]=1;
@@ -1380,14 +1379,10 @@ function closeDlg(){$('winDlg').classList.add('hidden')}
 function talk(n){
   setFace(me,n.x-me.x,n.y-me.y);setFace(n,me.x-n.x,me.y-n.y);sfx('click');
   const bye={label:'Tchau'};
-  if(n.id==='healer'){
-    dialog(n.name,'Que a luz de Valhen guie seus passos, aventureiro.<br>Deixe-me cuidar dos seus ferimentos e rezar por sua jornada.',[{label:'Aceitar a prece',fn:()=>{
-      me.buffs.bless=TIME+240;me.buffs.agi=TIME+240;calc();me.hp=me.maxHp;me.sp=me.maxSp;healHero(0,0);
-      fx.push({type:'pillar',ent:me,t:0,dur:1.2,col:'#fff0a0'});n.say={text:'Que os campos te protejam!',t:0};renderStats();renderBuffs()}},{label:'Agora não'}]);
-  }else if(n.id==='merchant'){
+  if(n.id==='merchant'){
     dialog(n.name,'Bem-vindo à minha venda! Tônicos, penas e armas de todo tipo...<br>Cada arma treina uma habilidade diferente. E compro qualquer tralha que você trouxer dos campos!',[{label:'Comprar',fn:()=>openShop('buy')},{label:'Vender',fn:()=>openShop('sell')},bye]);
   }else if(n.id==='guard'){
-    dialog(n.name,`Acordou, forasteiro? Achei você caído aqui na beira da estrada, ${me.name}. Sem arma, sem um cobre no bolso e com essa roupa esquisita... Mais um que veio de outro mundo, aposto.<br><br>Este é o <b>Vilarejo do Sabiá</b>. Dentro da cerca, monstro nenhum entra.<br>· A <b>Irmã Liesel</b>, perto da capelinha, cuida de feridos de graça.<br>· Na <b>Taverna do Caneco</b>, ao norte, o Gaspar arruma serviço para aventureiros.<br>· A <b>Venda do Tomas</b> compra o que você trouxer dos campos e vende armas.<br>· O <b>Mestre Brann</b>, no galpão, e a <b>Sábia Yselda</b>, na cabana, ensinam técnicas.<br>· Na <b>Hospedaria</b>, a Dona Marta tem cama quente.<br><br>Sem arma? Seus punhos servem contra os <b>Lodinhos</b> aqui perto. Mais longe ficam as <b>Lebres-Galhudas</b> e os <b>Chapéus-Pulantes</b>.`,[bye]);
+    dialog(n.name,`Acordou, forasteiro? Achei você caído aqui na beira da estrada, ${me.name}. Sem arma, sem um cobre no bolso e com essa roupa esquisita... Mais um que veio de outro mundo, aposto.<br><br>Este é o <b>Vilarejo do Sabiá</b>. Dentro da cerca, monstro nenhum entra.<br>· Na <b>Taverna do Caneco</b>, ao norte, o Gaspar arruma serviço para aventureiros.<br>· A <b>Venda do Tomas</b> compra o que você trouxer dos campos e vende armas.<br>· O <b>Mestre Brann</b>, no galpão, e a <b>Sábia Yselda</b>, na cabana, ensinam técnicas.<br>· Na <b>Hospedaria</b>, a Dona Marta tem cama quente para curar os ferimentos.<br><br>Sem arma? Seus punhos servem contra os <b>Lodinhos</b> aqui perto. Mais longe ficam as <b>Lebres-Galhudas</b> e os <b>Chapéus-Pulantes</b>.`,[bye]);
   }else if(n.id==='tavern'){
     const r=RANKS[rankOf()][0],first=!me.quests.reg;me.quests.reg=true;
     dialog(n.name,(first?`Forasteiro, é? Senta aí. Eu respondo pela <b>Guilda dos Aventureiros</b> aqui no vilarejo: a sede fica na cidade grande, mas os pedidos daqui passam por mim.<br>Deixa eu anotar seu nome no livro... <i>${me.name}</i>. Pronto: aventureiro de rank <span class="rank">${r}</span>.<br><br>`:`De volta, ${me.name}? Seu rank é <span class="rank">${r}</span>.<br><br>`)+`Aqui eu só repasso missões de rank <b>E</b> e <b>D</b>. Pegue até ${MAXQ} de uma vez e me traga o serviço feito. Missões rendem pontos de guilda e sobem o seu rank.`,[{label:'Ver missões',fn:()=>openGuild(qAnyDone()?'mine':'board')},bye]);
