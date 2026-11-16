@@ -382,7 +382,7 @@ function sprHuman(o,dir,state,f){
     else if(o.wtype==='espada'){const[tx,ty]=at(1);ln(hx,hy,tx,ty,o.blade);ln(hx+1,hy,tx+1,ty,o.bladeD);p(hx-1,hy-1,3,2,'#e0b040')}
     else if(o.wtype==='lanca'){const[bx,by2]=at(-.45),[mx,my]=at(1.25),[tx,ty]=at(1.6);ln(bx,by2,mx,my,'#8e6034');ln(mx,my,tx,ty,o.blade);p(mx-1,my-1,3,2,o.bladeD)}
     else if(o.wtype==='machado'){const[tx,ty]=at(1);ln(hx,hy,tx,ty,'#8e6034');p(tx-2,ty-2,4,4,o.bladeD);p(tx-2,ty-2,3,3,o.blade)}
-    else if(o.wtype==='maca'){const[tx,ty]=at(.95);ln(hx,hy,tx,ty,'#6b4426');p(tx-2,ty-2,4,4,'#6a7080');p(tx-2,ty-2,3,3,'#a8b0c0');p(tx-3,ty-1,1,1,'#6a7080');p(tx+2,ty-1,1,1,'#6a7080');p(tx,ty-3,1,1,'#6a7080')}
+    else if(o.wtype==='maca'){const[tx,ty]=at(.95);ln(hx,hy,tx,ty,'#6b4426');p(tx-2,ty-2,4,4,o.maceD||'#6a7080');p(tx-2,ty-2,3,3,o.maceL||'#a8b0c0');p(tx-3,ty-1,1,1,'#6a7080');p(tx+2,ty-1,1,1,'#6a7080');p(tx,ty-3,1,1,'#6a7080')}
   };
   const S=o.skin,SD=o.skinD;
   if(!front)weapon();
@@ -892,8 +892,23 @@ const ACTIVE={
   cura:{name:'Cura',icon:'a_cura',el:'luz',price:600,req:['luz',0],sp:10,cd:2,cast:.6,self:true,heal:true,desc:'Recupera HP. Cura mais com Luz e Inteligência.'},
   raio:{name:'Raio Sagrado',icon:'e_luz',el:'luz',price:2800,req:['luz',12],sp:14,cd:3,cast:1,power:1.75,range:7,desc:'Um feixe de luz que castiga o alvo.'},
   toque:{name:'Toque Sombrio',icon:'e_sombras',el:'sombras',price:500,req:['sombras',0],sp:8,cd:2,cast:.6,power:1,drain:.4,range:5,desc:'Fere o alvo e rouba 40% do dano como HP.'},
+  arma_fogo:{name:'Espada Flamejante',icon:'cj_fogo',el:'fogo',conj:true,self:true,price:1500,req:['fogo',10],sp:12,drain:1.5,cd:2,cast:.8,desc:'Conjura uma espada de fogo. Treina Espada.'},
+  arma_agua:{name:'Lança Glacial',icon:'cj_agua',el:'agua',conj:true,self:true,price:1500,req:['agua',10],sp:12,drain:1.5,cd:2,cast:.8,desc:'Conjura uma lança de gelo. Treina Lança e alcança 2 quadros.'},
+  arma_terra:{name:'Machado de Rocha',icon:'cj_terra',el:'terra',conj:true,self:true,price:1500,req:['terra',10],sp:12,drain:1.5,cd:2,cast:.8,desc:'Conjura um machado de pedra. Treina Machado.'},
+  arma_ar:{name:'Adaga do Vento',icon:'cj_ar',el:'ar',conj:true,self:true,price:1500,req:['ar',10],sp:12,drain:1.5,cd:2,cast:.8,desc:'Conjura uma adaga de vento. Treina Adaga e acerta críticos com mais facilidade.'},
+  arma_luz:{name:'Maça Radiante',icon:'cj_luz',el:'luz',conj:true,self:true,price:1500,req:['luz',10],sp:12,drain:1.5,cd:2,cast:.8,desc:'Conjura uma maça de luz. Treina Maça e ignora parte da defesa.'},
+  arma_sombras:{name:'Garras Sombrias',icon:'cj_sombras',el:'sombras',conj:true,self:true,price:1500,req:['sombras',10],sp:12,drain:1.5,cd:2,cast:.8,desc:'Envolve os punhos em garras de sombra. Treina Desarmado.'},
   eclipse:{name:'Eclipse',icon:'e_sombras',el:'sombras',price:4000,req:['sombras',20],sp:20,cd:6,cast:1.4,power:1.5,aoe:2,drain:.15,range:6,desc:'Escuridão que fere todos perto do alvo e rouba HP.'},
 };
+const CONJ={
+  fogo:{wt:'espada',blade:'#ffd070',bladeD:'#e04a10',wicon:'sword'},
+  agua:{wt:'lanca',blade:'#e0f8ff',bladeD:'#4aa8e0',wicon:'spear'},
+  terra:{wt:'machado',blade:'#d8b070',bladeD:'#7a5a30',wicon:'axe'},
+  ar:{wt:'adaga',blade:'#f0fff8',bladeD:'#7adcc0',wicon:'dagger'},
+  luz:{wt:'maca',blade:'#fff4a0',bladeD:'#e0b040',wicon:'mace'},
+  sombras:{wt:'desarmado',blade:'#b07ae8',bladeD:'#5a2a8a',wicon:'s_desarmado'},
+};
+for(const id in ACTIVE){const a=ACTIVE[id];if(a.conj)a.desc+=` Fica ativa até você desfazê-la (use de novo) ou o SP acabar: drena ${a.drain} SP por segundo, menos conforme sobe de nível. A arma conjurada substitui a equipada, fica mais forte com ${ELN[a.el]} e cada golpe soma dano de ${ELN[a.el]}.`}
 const ALLSK=Object.assign({},PASSIVE,ACTIVE);
 function skName(id){return ALLSK[id].name}
 // ninguém nasce sabendo: habilidades ativas são aprendidas com instrutores, pagando
@@ -983,12 +998,15 @@ function initHero(data){
   me=Object.assign(base,data);me.xp=Object.assign(newHero('').xp,data.xp||{});
   me.learned=(data.learned||[]).filter(id=>ACTIVE[id]);me.quests=data.quests||{active:{},done:{},pts:0};delete me.quest;
   Object.assign(me,{x:C+.5,y:C+3.5,path:[],face:{flip:false,front:true},moving:false,walkA:0,atkT:0,flash:0,dead:false,sit:false,
-    target:null,queued:null,npc:null,pick:null,repath:0,nextAtk:0,cast:null,cd:{},regT:0,sregT:0,buffs:{},say:null,walkAcc:0});
+    target:null,queued:null,npc:null,pick:null,repath:0,nextAtk:0,cast:null,conj:null,conjAcc:0,cd:{},regT:0,sregT:0,buffs:{},say:null,walkAcc:0});
   me.L={};for(const id in ALLSK)me.L[id]=levelOf(me.xp[id]);
   calc();
   if(!data.hp){me.hp=me.maxHp;me.sp=me.maxSp}
 }
-function wtype(){return me.eq.weapon?ITEMS[me.eq.weapon].wt:'desarmado'}
+function wtype(){if(me.conj)return CONJ[me.conj.el].wt;return me.eq.weapon?ITEMS[me.eq.weapon].wt:'desarmado'}
+function conjAtk(){const c=me.conj;return Math.floor(10+me.E(c.el)*1.4+me.L[c.id]*.6+me.E('inteligencia')*.3)}
+function conjDrain(){const a=ACTIVE[me.conj.id];return Math.max(.3,a.drain*(1-me.L[me.conj.id]*.006))}
+function endConj(why){if(!me.conj)return;const a=ACTIVE[me.conj.id];me.conj=null;calc();renderStats();renderBuffs();renderHot();if(why)msg(why,'#c0c8e0');else msg(`${a.name} se desfez.`,'#c0c8e0');burst(me.x,me.y,ELC[a.el],10,16)}
 function boosts(){
   const b={atk:0,hp:0,def:0};
   for(const id of me.cards){const it=ITEMS[id];for(const k in it.bonus)b[k]=(b[k]||0)+it.bonus[k]}
@@ -1000,14 +1018,14 @@ function calc(){
   const b=boosts();me.bon=b;
   const E=id=>me.L[id]+(b[id]||0);me.E=E;
   const F=E('forca'),D=E('destreza'),A=E('agilidade'),Rs=E('resistencia'),I=E('inteligencia'),wt=wtype(),W=E(wt);
-  const w=me.eq.weapon?ITEMS[me.eq.weapon]:null,ar=(me.eq.armor?ITEMS[me.eq.armor].def:0)+(me.eq.legs?ITEMS[me.eq.legs].def:0);
+  const w=me.conj?{atk:conjAtk()}:me.eq.weapon?ITEMS[me.eq.weapon]:null,ar=(me.eq.armor?ITEMS[me.eq.armor].def:0)+(me.eq.legs?ITEMS[me.eq.legs].def:0);
   me.maxHp=Math.floor(60+Rs*12+F*2+b.hp);
   me.maxSp=Math.floor(20+I*6);
   me.atk=Math.floor(6+F*1.6+D*.3+(w?w.atk:3)*(1+W*.012)+W*.6+b.atk);
   me.matk=Math.floor(10+I*1.8+D*.2);
   me.def=Math.floor(Rs*.5+ar+b.def);
   me.hit=Math.floor(10+D+W*.6);me.flee=Math.floor(5+A);
-  me.crit=Math.floor(2+D*.12+(wt==='adaga'?5:0));
+  me.crit=Math.floor(2+D*.12+(wt==='adaga'?5:0)+(me.conj&&me.conj.el==='ar'?5:0));
   me.adelay=Math.round(1000*WSPD[wt]*Math.max(.45,1-A*.005-D*.0015));
   me.aspd=Math.round(200-me.adelay/10);
   me.castMul=Math.max(.4,1-D*.006);
@@ -1042,13 +1060,14 @@ function flushXp(){
   const box=$('xpd');box.appendChild(d);while(box.children.length>6)box.firstChild.remove();setTimeout(()=>d.remove(),2000);
 }
 function heroLook(){
-  const k='hero_'+me.eq.weapon+'_'+me.eq.armor+'_'+me.eq.legs;
+  const k='hero_'+(me.conj?'cj_'+me.conj.el:me.eq.weapon)+'_'+me.eq.armor+'_'+me.eq.legs;
   return cached('look_'+k,()=>{const w=me.eq.weapon?ITEMS[me.eq.weapon]:null,x={};
     if(me.eq.armor==='camiseta')Object.assign(x,{tunic:'#f2f2f4',tunicD:'#c4c8d2',trim:'#3a6ac8',belt:'#2a2a34'});
     else if(me.eq.armor==='cota')Object.assign(x,{armor:'#a8b0c0',armorD:'#707888'});
     else if(!me.eq.armor)Object.assign(x,{tunic:'#f8d0b0',tunicD:'#e0a888',trim:'#f8d0b0'});
     if(me.eq.legs==='jeans')Object.assign(x,{pants:'#3a5a9a',pantsD:'#2a4070',boot:'#f0f0f0'});
-    Object.assign(x,w?{weapon:1,wtype:w.wt,blade:w.blade||'#e6ecf6',bladeD:w.bladeD||'#8a93ad'}:{weapon:0});
+    if(me.conj){const c=CONJ[me.conj.el];Object.assign(x,c.wt==='desarmado'?{weapon:0}:{weapon:1,wtype:c.wt,blade:c.blade,bladeD:c.bladeD,maceL:c.blade,maceD:c.bladeD})}
+    else Object.assign(x,w?{weapon:1,wtype:w.wt,blade:w.blade||'#e6ecf6',bladeD:w.bladeD||'#8a93ad'}:{weapon:0});
     return Object.assign(look('hero',x),{id:k})});
 }
 
@@ -1121,11 +1140,17 @@ function addNum(e,text,col,big){nums.push({x:e.x,y:e.y,text,col,big,t:0,vx:rand(
 function burst(x,y,col,n=8,h=10,sp=[25,70]){const s=iso(x,y);for(let i=0;i<n;i++){const a=rand(0,Math.PI*2),v=rand(sp[0],sp[1]);parts.push({x:s.x,y:s.y-h,vx:Math.cos(a)*v,vy:Math.sin(a)*v-10,g:60,life:rand(.2,.45),max:.45,col,s:1})}}
 function hitChance(att,def){return clamp(80+att-def,5,95)}
 function trainMelee(d){const wt=wtype();addXp(wt,d*1+1);addXp('forca',d*.5);addXp('destreza',1.5)}
+// arma conjurada: cada golpe que acerta soma dano do elemento
+function conjHit(m){
+  if(!me.conj||m.dead)return;const el=me.conj.el,id=me.conj.id,em=elMul(el,m.def.el);
+  const dmg=Math.max(1,Math.round(me.matk*.3*(1+me.E(el)*.01)*(1+me.L[id]*.005)*em*rand(.9,1.1)));
+  damageMon(m,dmg,{col:ELC[el],el,silent:true});addXp(el,dmg*.5+1);addXp(id,dmg*.3+1);
+}
 function physDmg(m,mul=1){const pen=wtype()==='maca'?.5:1;return Math.max(1,Math.floor(me.atk*mul*rand(.88,1.08))-Math.floor(m.def.def*pen))}
 function playerAttack(m){
   me.atkT=.3;setFace(me,m.x-me.x,m.y-me.y);
-  if(Math.random()*100<me.crit){const dmg=Math.floor(me.atk*1.5*rand(.95,1.05));damageMon(m,dmg,{crit:true});trainMelee(dmg);addXp('destreza',3);return}
-  if(Math.random()*100<hitChance(me.hit,m.def.flee)){const dmg=physDmg(m);damageMon(m,dmg,{});trainMelee(dmg)}
+  if(Math.random()*100<me.crit){const dmg=Math.floor(me.atk*1.5*rand(.95,1.05));damageMon(m,dmg,{crit:true});trainMelee(dmg);addXp('destreza',3);conjHit(m);return}
+  if(Math.random()*100<hitChance(me.hit,m.def.flee)){const dmg=physDmg(m);damageMon(m,dmg,{});trainMelee(dmg);conjHit(m)}
   else{addNum(m,'MISS','#c8e0ff');sfx('miss');aggro(m);addXp(wtype(),1)}
 }
 function aggro(m){if(!m.target){m.target=me;m.repath=0;if(!m.def.aggro)emotes.push({e:m,t:0,txt:'!'})}}
@@ -1144,7 +1169,7 @@ function killMon(m){
   for(const[id,ch]of m.def.drops)if(Math.random()<ch)dropItem(id,m.x,m.y);
   if(me.target===m){me.target=null;me.queued=null}
   for(const id in me.quests.active){const q=QUESTS[id],st=me.quests.active[id];
-    if(q.kill&&q.kill[m.kind]!==undefined&&st.k[m.kind]<q.kill[m.kind]){st.k[m.kind]++;msg(`[${q.name}] ${m.def.name}: ${st.k[m.kind]}/${q.kill[m.kind]}`,'#9fd0ff');if(qDone(id))msg(`[${q.name}] Concluída! Entregue na Guilda dos Aventureiros.`,'#9fd0ff')}}
+    if(q.kill&&q.kill[m.kind]!==undefined&&st.k[m.kind]<q.kill[m.kind]){st.k[m.kind]++;msg(`[${q.name}] ${m.def.name}: ${st.k[m.kind]}/${q.kill[m.kind]}`,'#9fd0ff');if(qDone(id))msg(`[${q.name}] Concluída! Entregue ao Gaspar, na taverna.`,'#9fd0ff')}}
   if(m.def.boss)msg(`${me.name} derrotou o ${m.def.name}!`,'#ffd060');
   updQuest();
 }
@@ -1158,7 +1183,7 @@ function monAttack(m){
     if(me.hp<=0)die();
   }else{addNum(me,'MISS','#c8e0ff');addXp('agilidade',3+m.def.lv*.3)}
 }
-function die(){me.hp=0;me.dead=true;me.target=null;me.path=[];me.sit=false;me.cast=null;sfx('die');$('winDeath').classList.remove('hidden');msg('Você foi derrotado...','#ff8080')}
+function die(){if(me.conj){me.conj=null;calc()}me.hp=0;me.dead=true;me.target=null;me.path=[];me.sit=false;me.cast=null;sfx('die');$('winDeath').classList.remove('hidden');msg('Você foi derrotado...','#ff8080')}
 function revive(){
   leaveRoom(false);
   const lost=Math.floor(me.zeny*.05);me.zeny-=lost;if(lost)msg(`Você perdeu ${fmt(lost)} cobres.`,'#ffb0b0');
@@ -1173,6 +1198,7 @@ function canUse(id,say){
   const s=ACTIVE[id];
   const no=t=>{if(say)msg(t,'#ffb0b0');return false};
   if(!unlocked(id)){const t=teacher(id);return no(`Você ainda não aprendeu ${s.name}. Procure ${t.name} (${t.place}).`)}
+  if(s.conj&&me.conj&&me.conj.id===id)return true;
   if(s.weapon&&wtype()!==s.weapon)return no(`${s.name} exige ${s.weapon==='desarmado'?'estar desarmado':'uma '+WNAME[s.weapon].toLowerCase()+' equipada'}.`);
   if((me.cd[id]||0)>TIME)return no(`${s.name} ainda está recarregando.`);
   if(me.sp<skillCost(id))return no('SP insuficiente.');
@@ -1184,6 +1210,7 @@ function castOn(id,m){
 }
 function startSkill(id,T){
   me.queued=null;const s=ACTIVE[id];if(!canUse(id,true))return;
+  if(s.conj&&me.conj&&me.conj.id===id){endConj();return}
   if(s.cast){me.cast={id,target:T,t:0,dur:s.cast*me.castMul};me.path=[];sfx('cast');return}
   execSkill(id,T);
 }
@@ -1195,6 +1222,12 @@ function magicDmg(s,id,m){
 function execSkill(id,T){
   const s=ACTIVE[id],mul=1+me.L[id]*.01;pay(id);
   if(T&&T!==me)setFace(me,T.x-me.x,T.y-me.y);
+  if(s.conj){
+    const old=me.conj;me.conj={id,el:s.el};me.conjAcc=0;calc();renderStats();renderBuffs();renderHot();
+    fx.push({type:'pillar',ent:me,t:0,dur:1,col:ELC[s.el]});fx.push({type:'ring',ent:me,t:0,dur:.5,col:ELC[s.el],r:26});sfx(s.el);me.say={text:s.name+'!',t:0};
+    msg(old?`${ACTIVE[old.id].name} deu lugar a ${s.name}.`:`Você conjurou ${s.name}! (ATK da arma: ${conjAtk()} · −${conjDrain().toFixed(1)} SP/s)`,ELC[s.el]);
+    addXp(s.el,8);addXp(id,6);return;
+  }
   if(s.el){
     me.atkT=.3;addXp('destreza',1);
     if(s.heal){const h=Math.round((me.matk*1.3+12)*(1+me.E('luz')*.02)*mul);healHero(h,0);addXp('luz',h*.8);addXp(id,h*.5+3);fx.push({type:'pillar',ent:me,t:0,dur:.9,col:'#fff4a0'});return}
@@ -1218,7 +1251,7 @@ function execSkill(id,T){
   for(let i=0;i<hits;i++)timers.push({t:i*.16,fn:()=>{
     me.atkT=.3;
     const tg=s.aoe?monsters.filter(m=>!m.dead&&dist(m.x,m.y,me.x,me.y)<=s.aoe):(T&&!T.dead?[T]:[]);
-    for(const m of tg){const dmg=physDmg(m,s.power*mul);damageMon(m,dmg,{big:true,col:'#ffb060'});trainMelee(dmg);addXp(id,dmg*.6+3);if(s.stun)m.stunT=s.stun}
+    for(const m of tg){const dmg=physDmg(m,s.power*mul);damageMon(m,dmg,{big:true,col:'#ffb060'});trainMelee(dmg);addXp(id,dmg*.6+3);if(s.stun)m.stunT=s.stun;conjHit(m)}
   }});
   me.nextAtk=TIME+me.adelay/1000;
 }
@@ -1553,7 +1586,7 @@ function openCtx(cx,cy){
     ops.push({label:'Pegar',fn:()=>{me.pick=it;me.target=null;me.npc=null;moveTo(it.x,it.y)}},{label:'Examinar',fn:()=>msg(`${d.name}: ${d.desc}`,'#d8e8ff')})}
   else if(b){head=b.name;ops.push({label:'Entrar',fn:()=>{me.target=null;me.npc=null;me.pick=null;moveTo(b.door.x,b.door.y,true)}})}
   else if(overMe(mouse.x,mouse.y)){head=me.name;
-    ops.push(sitOp);for(const id of me.learned.filter(id=>ACTIVE[id].self))ops.push({label:`${ACTIVE[id].name} (SP ${skillCost(id)})`,off:!canUse(id,false),fn:()=>goSkill(id,me)});
+    ops.push(sitOp);for(const id of me.learned.filter(id=>ACTIVE[id].self))ops.push({label:me.conj&&me.conj.id===id?`Desfazer ${ACTIVE[id].name}`:`${ACTIVE[id].name} (SP ${skillCost(id)})`,off:!canUse(id,false),fn:()=>goSkill(id,me)});
     ops.push({sep:1},{label:'Status (A)',fn:()=>toggle('winStats')},{label:'Itens (E)',fn:()=>toggle('winInv')},{label:'Habilidades (S)',fn:()=>toggle('winSkill')})}
   else{
     if(t&&walkable(t.x,t.y))ops.push({label:'Andar até aqui',fn:()=>{me.target=null;me.npc=null;me.pick=null;me.queued=null;moveTo(t.x,t.y,true)}});
@@ -1631,6 +1664,11 @@ function updHero(dt){
   if(me.pick){if(!items.includes(me.pick))me.pick=null;else if(dist(me.x,me.y,me.pick.x,me.pick.y)<=.95){pickup(me.pick);me.pick=null;me.path=[]}else if(!me.path.length)me.pick=null}
   if(mouse.down&&!mouse.overUI&&!me.target&&!me.npc&&!me.pick&&!pendingSkill){mouse.holdT-=dt;if(mouse.holdT<=0){mouse.holdT=.25;const t=mouseTile();if(t)moveTo(t.x,t.y,false)}}
   const moved=stepMove(me,dt);if(moved>0||!me.path.length)doorCheck();if(me.moving){me.walkA+=dt;me.sit=false;me.walkAcc+=moved;if(me.walkAcc>=1){me.walkAcc-=1;addXp('agilidade',.25,true)}}
+  if(me.conj){
+    me.conjAcc+=conjDrain()*dt;while(me.conjAcc>=1){me.conjAcc-=1;me.sp-=1;addXp('inteligencia',1.2,true)}
+    if(me.sp<=0){me.sp=0;endConj(`Seu SP acabou e ${ACTIVE[me.conj.id].name} se desfez.`)}
+    else if(Math.random()<.35){const s=iso(me.x,me.y);parts.push({x:s.x+rand(-8,8),y:s.y-rand(4,24),vx:rand(-4,4),vy:-rand(8,20),g:0,life:rand(.3,.6),max:.6,col:pick([ELC[me.conj.el],'#ffffff']),s:1})}
+  }
   me.regT+=dt;me.sregT+=dt;
   if(me.regT>=(me.sit?2:4)){me.regT=0;if(me.hp<me.maxHp){const a=Math.max(1,Math.floor(me.maxHp/60)+Math.floor(me.E('resistencia')/6));me.hp=Math.min(me.maxHp,me.hp+Math.round(a*(me.sit?1.5:1)))}}
   if(me.sregT>=(me.sit?2.5:5)){me.sregT=0;if(me.sp<me.maxSp)me.sp=Math.min(me.maxSp,me.sp+1+Math.floor(me.E('inteligencia')/8)+Math.floor(me.maxSp/100))}
@@ -1824,7 +1862,7 @@ function renderStats(){
   ${r('HP máx.',me.maxHp)}${r('SP máx.',me.maxSp)}
   ${r('ATK',me.atk)}${r('MATK',me.matk)}${r('DEF',me.def)}${r('HIT',me.hit)}
   ${r('FLEE',me.flee)}${r('CRIT',me.crit+'%')}${r('ASPD',me.aspd)}${r('Conjuração',Math.round(me.castMul*100)+'%')}
-  ${r('Arma',WNAME[wtype()])}${r('Alcance',me.range>2?'2 quadros':'1 quadro')}</div>
+  ${r('Arma',me.conj?ACTIVE[me.conj.id].name:WNAME[wtype()])}${r('Alcance',me.range>2?'2 quadros':'1 quadro')}</div>
   <div style="margin-top:8px;font-size:10px;color:#6a7698;line-height:14px">Os números vêm das habilidades. Força → ATK · Destreza → HIT, CRIT, conjuração · Agilidade → FLEE, ASPD · Resistência → HP, DEF · Inteligência → SP, MATK.<br>Essências absorvidas: ${me.cards.length}</div>`;
 }
 let invTab='all';
@@ -1880,6 +1918,7 @@ function renderHot(){
 function updCooldowns(){document.querySelectorAll('[data-cd]').forEach(e=>{const id=e.dataset.cd,left=(me.cd[id]||0)-TIME;e.style.height=left>0?(left/ACTIVE[id].cd*100)+'%':'0'})}
 function renderBuffs(){
   const b=$('buffs');b.innerHTML='';
+  if(me.conj){const a=ACTIVE[me.conj.id];b.innerHTML+=`<div class="buff" data-tip="<b>${a.name}</b><br>ATK da arma ${conjAtk()} · dano extra de ${ELN[a.el]}<br>−${conjDrain().toFixed(1)} SP por segundo<br><i>Use de novo para desfazer</i>"><img src="${iconURL(a.icon)}"><span>∞</span></div>`}
   for(const k in me.buffs){const left=Math.max(0,Math.ceil(me.buffs[k]-TIME));const nm=k==='bless'?'Prece do Campo (Força, Destreza e Inteligência +5)':'Passo Ligeiro (Agilidade +4, velocidade)';b.innerHTML+=`<div class="buff" data-tip="<b>${nm}</b><br>${left}s restantes"><img src="${iconURL(k==='bless'?'buff_bless':'buff_agi')}"><span>${left}</span></div>`}
 }
 let shopMode='buy';
@@ -1953,6 +1992,7 @@ function buildSprites(){
   SPR.cell=sprCell('rgba(255,255,255,.7)');SPR.mark=sprCell('rgba(255,230,90,.35)',true);
   const keys=new Set();for(const k in ITEMS)keys.add(ITEMS[k].icon);for(const k in ALLSK)keys.add(ALLSK[k].icon);['buff_bless','buff_agi','sign_guild','sign_magic','sign_tavern','sign_inn'].forEach(k=>keys.add(k));
   SPR.icons={};for(const k of keys)SPR.icons[k]=sprIcon(k);
+  for(const el in CONJ)SPR.icons['cj_'+el]=tint(SPR.icons[CONJ[el].wicon]||sprIcon(CONJ[el].wicon),ELC[el],.55);
   SPR.dummy=sprDummy();
   SPR.f={shelfP:sprShelf('potions'),books:sprShelf('books'),shelfJ:sprShelf('jars'),rack:sprRack(),bed:sprBed(),fire:sprFire(),table:sprTable(),stool:sprStool(),crate:sprCrate(),cauldron:sprCauldron(),board:sprBoard(),candle:sprCandle(),barrel:SPR.barrel,hay:SPR.hay,dummy:SPR.dummy};
   SPR.counter={};for(const n of[3,4])SPR.counter[n]=sprBuilding({fw:n,fh:1,wh:14,roof:'flat',rr:R.brown,wall:'log',win:false});
