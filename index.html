@@ -1480,7 +1480,7 @@ function execSkill(id,T){
   const s=ACTIVE[id],mul=1+me.L[id]*.01;pay(id);
   if(T&&T!==me)setFace(me,T.x-me.x,T.y-me.y);
   if(s.conj){
-    const old=me.conj;me.conj={id,el:s.el};me.conjAcc=0;calc();renderStats();renderBuffs();renderHot();
+    const old=me.conj;me.conj={id,el:s.el};me.conjAcc=0;me.conjT=0;calc();renderStats();renderBuffs();renderHot();
     fx.push({type:'pillar',ent:me,t:0,dur:1,col:ELC[s.el]});fx.push({type:'ring',ent:me,t:0,dur:.5,col:ELC[s.el],r:26});sfx(s.el);me.say={text:s.name+'!',t:0};
     msg(old?`${ACTIVE[old.id].name} deu lugar a ${s.name}.`:`Você conjurou ${s.name}! (ATK da arma: ${conjAtk()} · −${conjDrain().toFixed(1)} SP/s)`,ELC[s.el]);
     addXp(s.el,8);addXp(id,6);return;
@@ -1923,6 +1923,8 @@ function updHero(dt){
   const moved=stepMove(me,dt);if(moved>0||!me.path.length)doorCheck();if(me.moving){me.walkA+=dt;me.sit=false;me.walkAcc+=moved;if(me.walkAcc>=1){me.walkAcc-=1;addXp('agilidade',.25,true)}}
   if(me.conj){
     me.conjAcc+=conjDrain()*dt;while(me.conjAcc>=1){me.conjAcc-=1;me.sp-=1;addXp('inteligencia',1.2,true)}
+    // a arma conjurada ganha XP a cada segundo que fica ativa
+    me.conjT=(me.conjT||0)+dt;while(me.conjT>=1){me.conjT-=1;addXp(me.conj.id,1)}
     if(me.sp<=0){me.sp=0;endConj(`Seu SP acabou e ${ACTIVE[me.conj.id].name} se desfez.`)}
     else if(Math.random()<.35){const s=iso(me.x,me.y);parts.push({x:s.x+rand(-8,8),y:s.y-rand(4,24),vx:rand(-4,4),vy:-rand(8,20),g:0,life:rand(.3,.6),max:.6,col:pick([ELC[me.conj.el],'#ffffff']),s:1})}
   }
