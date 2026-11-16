@@ -694,7 +694,7 @@ function sfx(type){
 // =====================================================================
 // Mundo
 // =====================================================================
-const N=96,C=48,CW=10,TW=32,TH=16,OXW=N*TW/2,GW=N*TW,GH=N*TH+TH;
+const N=96,C=48,CW=12,TW=32,TH=16,OXW=N*TW/2,GW=N*TW,GH=N*TH+TH;
 const T_GRASS=0,T_GRASS2=1,T_DIRT=2,T_SAND=3,T_WATER=4,T_STONE=5,T_VOID=6,T_FLOOR=7;
 const ground=new Uint8Array(N*N),block=new Uint8Array(N*N),reach=new Uint8Array(N*N);
 const gi=(x,y)=>y*N+x,inb=(x,y)=>x>=0&&y>=0&&x<N&&y<N;
@@ -714,20 +714,20 @@ function addBox(kind,bx,by,fw,fh,sp,extra){
 }
 // casas do vilarejo (posição relativa ao centro)
 const BUILDINGS=[
-  {id:'tavern',name:'Taverna do Caneco',room:'tavern',bx:2,by:-9,spec:{fw:4,fh:3,wh:24,rh:20,roof:'gable',rr:R.straw,wall:'timber',door:'L',doorAt:1.5,sign:'sign_tavern'}},
-  {id:'school',name:'Galpão de Treino',room:'school',bx:-6,by:-9,spec:{fw:3,fh:3,wh:22,rh:18,roof:'gable',rr:R.red,wall:'log',door:'L',doorAt:1.5,win:false,sign:'sword'}},
-  {id:'tower',name:'Cabana da Sábia',room:'tower',bx:-10+1,by:-9,spec:{fw:3,fh:3,wh:20,rh:24,roof:'pyr',rr:R.purple,wall:'stone',door:'L',doorAt:1.5,ov:.3,sign:'sign_magic'}},
-  {id:'chapel',name:'Capelinha',bx:-9,by:1,spec:{fw:3,fh:3,wh:24,rh:20,roof:'gable',rr:R.straw,wall:'plaster',wc:'#f6f2ea',door:'R',doorAt:1.5,sign:'a_cura'}},
-  {id:'shop',name:'Venda do Tomas',room:'shop',bx:6,by:-9,spec:{fw:3,fh:3,wh:20,rh:16,roof:'gable',rr:R.red,wall:'timber',door:'L',doorAt:1.5,sign:'potion_r'}},
-  {id:'inn',name:'Hospedaria do Sabiá',room:'inn',bx:4,by:3,spec:{fw:4,fh:3,wh:22,rh:18,roof:'gable',rr:R.brown,wall:'plaster',wc:'#efe2c8',door:'L',doorAt:1.5,sign:'sign_inn'}},
-  {id:'h3',bx:-9,by:6,spec:{fw:3,fh:3,wh:20,rh:16,roof:'gable',rr:R.straw,wall:'timber',door:'R',doorAt:1.5}},
+  {id:'tower',name:'Cabana da Sábia',room:'tower',bx:-11,by:-10,spec:{fw:3,fh:3,wh:28,rh:30,roof:'pyr',rr:R.purple,wall:'stone',door:'L',doorAt:1.5,ov:.3,sign:'sign_magic'}},
+  {id:'school',name:'Galpão de Treino',room:'school',bx:-6,by:-10,spec:{fw:3,fh:3,wh:30,rh:22,roof:'gable',rr:R.red,wall:'log',door:'L',doorAt:1.5,win:false,sign:'sword'}},
+  {id:'tavern',name:'Taverna do Caneco',room:'tavern',bx:2,by:-10,spec:{fw:4,fh:3,wh:32,rh:24,roof:'gable',rr:R.straw,wall:'timber',door:'L',doorAt:1.5,sign:'sign_tavern'}},
+  {id:'shop',name:'Venda do Tomas',room:'shop',bx:8,by:-10,spec:{fw:3,fh:3,wh:28,rh:20,roof:'gable',rr:R.red,wall:'timber',door:'L',doorAt:1.5,sign:'potion_r'}},
+  {id:'chapel',name:'Capelinha',bx:-11,by:1,spec:{fw:3,fh:3,wh:32,rh:24,roof:'gable',rr:R.straw,wall:'plaster',wc:'#f6f2ea',door:'R',doorAt:1.5,sign:'a_cura'}},
+  {id:'inn',name:'Hospedaria do Sabiá',room:'inn',bx:4,by:4,spec:{fw:4,fh:3,wh:30,rh:22,roof:'gable',rr:R.brown,wall:'plaster',wc:'#efe2c8',door:'L',doorAt:1.5,sign:'sign_inn'}},
+  {id:'h3',bx:-11,by:7,spec:{fw:3,fh:3,wh:28,rh:20,roof:'gable',rr:R.straw,wall:'timber',door:'R',doorAt:1.5}},
 ];
 function genMap(){
   ground.fill(0);block.fill(0);objects.length=0;
   for(let y=0;y<N;y++)for(let x=0;x<N;x++){
     let t=fbm(x*.13,y*.13,11)>.6?T_GRASS2:T_GRASS;
     const w=fbm(x*.07+3,y*.07+5,23);
-    if(cheb(x,y)>14){if(w>.64)t=T_WATER;else if(w>.6)t=T_SAND}
+    if(cheb(x,y)>16){if(w>.64)t=T_WATER;else if(w>.6)t=T_SAND}
     ground[gi(x,y)]=t;
   }
   // largo de terra em volta do poço e trilhas de terra
@@ -753,25 +753,27 @@ function genMap(){
   for(const[a,b]of[[C-1,C-1],[C,C-1],[C-1,C],[C,C]])block[gi(a,b)]=1;
   for(const[a,b]of[[C-3,C-3],[C+2,C+2],[C+2,C-3],[C-3,C+2]])addObj('lamp',a,b,{spr:SPR.lamp});
   addObj('stall',C+4,C-3,{spr:SPR.stall});
-  addObj('barrel',C+6,C-3,{spr:SPR.barrel});addObj('barrel',C+2,C-5,{spr:SPR.barrel});
+  addObj('barrel',C+6,C-4,{spr:SPR.barrel});addObj('barrel',C+1,C-5,{spr:SPR.barrel});
   DOORS.length=0;
   for(const b of BUILDINGS){const o=addBox('bld',C+b.bx,C+b.by,b.spec.fw,b.spec.fh,SPR.bld[b.id],{name:b.name});
     if(b.room){const sp=b.spec,L=sp.door==='L',x=L?C+b.bx+Math.floor(sp.doorAt):C+b.bx+sp.fw-1,y=L?C+b.by+sp.fh-1:C+b.by+Math.floor(sp.doorAt);
       const d={x,y,ox:L?x:x+1,oy:L?y+1:y,room:b.room,name:b.name};block[gi(x,y)]=0;DOORS.push(d);o.door=d}}
   // hortas, feno e uma carroça
-  for(let y=C+5;y<=C+8;y++)for(let x=C+2;x<=C+7;x++){if(block[gi(x,y)])continue;ground[gi(x,y)]=T_DIRT;if((x+y)%1===0)addObj('crop',x,y,{spr:SPR.crops[(x*7+y*3)%3]})}
-  for(let y=C-6;y<=C-5;y++)for(let x=C+6;x<=C+8;x++){ground[gi(x,y)]=T_DIRT;addObj('crop',x,y,{spr:SPR.crops[(x+y)%3]})}
-  for(const[a,b]of[[C-8,C-1],[C-7,C-2],[C+8,C+1],[C-4,C+5]])addObj('hay',a,b,{spr:SPR.hay});
+  for(let y=C+9;y<=C+10;y++)for(let x=C+3;x<=C+9;x++){if(block[gi(x,y)])continue;ground[gi(x,y)]=T_DIRT;addObj('crop',x,y,{spr:SPR.crops[(x*7+y*3)%3]})}
+  for(let y=C-4;y<=C-3;y++)for(let x=C+8;x<=C+10;x++){ground[gi(x,y)]=T_DIRT;addObj('crop',x,y,{spr:SPR.crops[(x+y)%3]})}
+  for(const[a,b]of[[C-9,C-3],[C-8,C-4],[C+9,C+2],[C-5,C+7]])addObj('hay',a,b,{spr:SPR.hay});
   addObj('cart',C+3,C+1,{spr:SPR.cart});
-  for(const[a,b]of[[C-5,C+7],[C+8,C-1],[C-9,C-3],[C-3,C+8]])addObj('tree',a,b,{spr:pick(SPR.trees.oak)});
-  for(const[a,b]of[[C-3,C-7],[C+4,C+2],[C-6,C+5]])addObj('bush',a,b,{spr:SPR.bush});
+  for(const[a,b]of[[C-6,C+10],[C+10,C+4],[C-11,C-4],[C-3,C+10]])addObj('tree',a,b,{spr:pick(SPR.trees.oak)});
+  for(const[a,b]of[[C-3,C-11],[C+4,C+2],[C-6,C+5]])addObj('bush',a,b,{spr:SPR.bush});
+  // a frente de cada porta fica sempre livre
+  for(const d of DOORS){const k=gi(d.ox,d.oy);for(let i=objects.length-1;i>=0;i--){const o=objects[i];if(!o.box&&Math.floor(o.x)===d.ox&&Math.floor(o.y)===d.oy)objects.splice(i,1)}block[k]=0}
   const canPut=(x,y)=>{const t=ground[gi(x,y)];return(t===T_GRASS||t===T_GRASS2)&&!block[gi(x,y)]};
   for(let y=0;y<N;y++)for(let x=0;x<N;x++){
     if(!canPut(x,y))continue;
     const edge=Math.min(x,y,N-1-x,N-1-y),dc=cheb(x,y);
     const treeKind=()=>{const v=vnoise(x*.09,y*.09,91);return v>.62?'pine':v<.3?'blossom':'oak'};
     if(edge<2){if(edge===0||Math.random()<.85)addObj('tree',x,y,{spr:pick(SPR.trees[treeKind()])});continue}
-    if(dc<11.5)continue;
+    if(dc<13.5)continue;
     const f=fbm(x*.1+9,y*.1+2,37);
     if(f>.6&&dc>18&&Math.random()<.55)addObj('tree',x,y,{spr:pick(SPR.trees[treeKind()])});
     else if(Math.random()<.022)addObj('tree',x,y,{spr:pick(SPR.trees[treeKind()])});
@@ -925,7 +927,7 @@ const MON={
   rei:{name:'Lodo Ancião',lv:45,el:'agua',hp:3000,atk:[38,55],def:14,hit:80,flee:30,speed:2.4,adelay:1.3,aggro:true,boss:true,spr:'slime',ramp:'gold',sprout:true,scale:2,respawn:180,drops:[['coroa',1],['pocao_l',1],['pocao_l',.6],['lamina',.25],['carta_rei',.15]]},
 };
 // área inicial: só 3 tipos (Lodinho perto do vilarejo, Lebre-Galhuda no meio, Chapéu-Pulante nas bordas)
-const SPAWNS=[['gelim',26,13,28],['coelho',22,24,46],['cogumelo',20,36,68]];
+const SPAWNS=[['gelim',26,15,30],['coelho',22,24,46],['cogumelo',20,36,68]];
 
 // missões da Guilda dos Aventureiros
 const QUESTS={
@@ -1065,7 +1067,7 @@ function stepMove(e,dt){
 // Monstros, NPCs, itens
 // =====================================================================
 function randSpawnTile(r0,r1){
-  for(let k=0;k<800;k++){const x=irand(1,N-2),y=irand(1,N-2),d=dist(x+.5,y+.5,C,C);if(d<r0||d>r1)continue;if(cheb(x,y)<12)continue;if(!reach[gi(x,y)])continue;if(ground[gi(x,y)]===T_STONE)continue;return{x,y}}
+  for(let k=0;k<800;k++){const x=irand(1,N-2),y=irand(1,N-2),d=dist(x+.5,y+.5,C,C);if(d<r0||d>r1)continue;if(cheb(x,y)<14)continue;if(!reach[gi(x,y)])continue;if(ground[gi(x,y)]===T_STONE)continue;return{x,y}}
   return{x:C,y:C+20};
 }
 function makeMon(kind,r0,r1){
@@ -1252,8 +1254,8 @@ function useSlot(i){
 function makeNPCs(){
   const mk=(id,name,lk,tx,ty,flip)=>({id,name,look:Object.assign(look(lk),{id:lk}),x:C+tx+.5,y:C+ty+.5,face:{flip:!!flip,front:true},anim:Math.random()*3});
   npcs=[
-    mk('healer','Irmã Liesel','priest',-5,3),
-    mk('guard','Seu Bento, o Vigia','guard',2,10),
+    mk('healer','Irmã Liesel','priest',-7,3),
+    mk('guard','Seu Bento, o Vigia','guard',2,12),
   ];
   for(const n of npcs)block[gi(Math.floor(n.x),Math.floor(n.y))]=1;
 }
@@ -1894,7 +1896,7 @@ function startGame(data){
   msg('Pressione H para ver os controles.','#ffe8a0');
   msg('Aqui não há classes: tudo o que você usa fica mais forte. Abra as habilidades com S.','#c8d8ff');
   if(!data.hot){
-    me.x=C+.5;me.y=C+12.5;me.face={flip:false,front:true};
+    me.x=C+.5;me.y=C+13.5;me.face={flip:false,front:true};
     const bento=npcs.find(n=>n.id==='guard');
     dialog('???',`A última coisa de que você se lembra é o farol de um caminhão e um clarão branco.<br><br>Agora há grama sob as suas costas, um céu azul demais e dois sóis pálidos no horizonte. No bolso, nada. No corpo, só a <b>camiseta</b> e a <b>calça jeans</b> de sempre.<br><br>Este não é o seu mundo.`,[{label:'Levantar-se',fn:()=>talk(bento)}]);
   }else msg('Dica: o Gaspar, na Taverna do Caneco, repassa as missões da guilda.','#c8d8ff');
