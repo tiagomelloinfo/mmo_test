@@ -15,6 +15,9 @@ html,body{margin:0;height:100%;overflow:hidden;background:#0d1a0f;font:11px Verd
 .win .title{background:linear-gradient(var(--title-a),var(--title-b));border-bottom:1px solid #93a5cc;padding:3px 8px;font-weight:bold;cursor:move;display:flex;justify-content:space-between;align-items:center;color:#2b3d68;text-shadow:0 1px 0 #fff}
 .win .title .x{width:15px;height:15px;line-height:13px;text-align:center;border:1px solid #8a9cc4;border-radius:3px;background:#f7f9ff;font-size:10px;cursor:inherit}
 .win .body{padding:6px 8px}
+#ctx{position:fixed;z-index:80;min-width:150px;background:var(--win-bg);border:1px solid var(--win-bd);border-radius:6px;box-shadow:0 3px 12px rgba(0,0,0,.4);padding:3px 0;font-size:11px;color:var(--ink)}
+#ctx .ch{padding:3px 10px 4px;font-weight:bold;color:#2b3d68;border-bottom:1px solid #d8e0f0;margin-bottom:2px;background:linear-gradient(var(--title-a),var(--title-b))}
+#ctx .op{padding:4px 12px}#ctx .op:hover{background:#dbe6ff}#ctx .op.off{color:#a0a8b8}#ctx .op.off:hover{background:none}#ctx .sep{border-top:1px solid #e1e6f2;margin:2px 0}
 .hidden{display:none!important}
 button{font:11px Verdana,Tahoma,sans-serif;background:linear-gradient(#ffffff,#d9e2f4);border:1px solid #8193bd;border-radius:4px;padding:2px 7px;color:#22325a;cursor:inherit}
 button:hover:not(:disabled){background:linear-gradient(#ffffff,#c4d3f2)}
@@ -167,7 +170,7 @@ button:disabled{opacity:.4}
   <div class="title"><span>Como jogar</span><span class="x" data-close="winHelp">x</span></div>
   <div class="body" style="line-height:17px">
     <b>Clique no chão</b> para andar (segure para continuar andando).<br>
-    <b>Clique num monstro</b> para atacar sem parar. <b>Clique num item</b> para pegar. <b>Clique num NPC</b> para conversar.<br>
+    <b>Clique num monstro</b> para atacar sem parar. <b>Clique num item</b> para pegar. <b>Clique num NPC</b> para conversar. <b>Botão direito</b> abre as opções do que está sob o cursor.<br>
     <b>F1–F9</b> ou <b>1–9</b>: barra de atalhos. Arraste itens e habilidades ativas para ela; botão direito limpa.<br>
     <b>A</b> status · <b>E</b> itens · <b>S</b> habilidades · <b>X</b> sentar · <b>Enter</b> conversar · <b>Esc</b> fecha janelas ou abre o menu<br><br>
     <b>Não há classes.</b> Cada habilidade tem nível de 0 a 100 e sobe com o uso:<br>
@@ -185,6 +188,7 @@ button:disabled{opacity:.4}
   <div class="title"><span>Conversa</span></div>
   <div class="body"><div id="dlgName"></div><div id="dlgText"></div><div id="dlgBtns"></div></div>
 </div>
+<div id="ctx" class="hidden"></div>
 <div id="menuShade" class="hidden"></div>
 <div class="win hidden" id="winMenu">
   <div class="title"><span>Menu</span><span class="x" data-close="winMenu">x</span></div>
@@ -1168,7 +1172,7 @@ function skillCost(id){return Math.max(1,Math.round(ACTIVE[id].sp*(1-me.L[id]*.0
 function canUse(id,say){
   const s=ACTIVE[id];
   const no=t=>{if(say)msg(t,'#ffb0b0');return false};
-  if(!unlocked(id)){const t=teacher(id);return no(`Você ainda não aprendeu ${s.name}. Procure ${t.name} na ${t.place}.`)}
+  if(!unlocked(id)){const t=teacher(id);return no(`Você ainda não aprendeu ${s.name}. Procure ${t.name} (${t.place}).`)}
   if(s.weapon&&wtype()!==s.weapon)return no(`${s.name} exige ${s.weapon==='desarmado'?'estar desarmado':'uma '+WNAME[s.weapon].toLowerCase()+' equipada'}.`);
   if((me.cd[id]||0)>TIME)return no(`${s.name} ainda está recarregando.`);
   if(me.sp<skillCost(id))return no('SP insuficiente.');
@@ -1361,7 +1365,7 @@ function buildRooms(){
   }
   loadScene(WORLDSNAP);
 }
-function clearActs(){me.path=[];me.target=null;me.npc=null;me.pick=null;me.queued=null;me.sit=false;me.cast=null;pendingSkill=null;marker=null}
+function clearActs(){closeCtx();me.path=[];me.target=null;me.npc=null;me.pick=null;me.queued=null;me.sit=false;me.cast=null;pendingSkill=null;marker=null}
 function enterRoom(d){
   const rm=ROOMS[d.room],st=ROOMST[d.room];
   scene=d.room;sceneDoor=d;loadScene(st);groundC=st.gc.c;gOff=st.gc.off;npcs=st.npcs;
@@ -1522,12 +1526,49 @@ cv.addEventListener('mousemove',e=>{mouse.x=e.clientX/SCALE;mouse.y=e.clientY/SC
 cv.addEventListener('mouseleave',()=>{mouse.overUI=true;mouse.over=null;updCursor()});
 cv.addEventListener('mousedown',e=>{
   if(!started)return;audio();
-  if(e.button===2){pendingSkill=null;updCursor();return}
+  if(e.button===2)return;
+  closeCtx();
   if(e.button!==0)return;mouse.x=e.clientX/SCALE;mouse.y=e.clientY/SCALE;mouse.overUI=false;mouse.over=pickAt(mouse.x,mouse.y);
   mouse.down=true;mouse.holdT=.3;clickWorld();
 });
 addEventListener('mouseup',()=>mouse.down=false);
-cv.addEventListener('contextmenu',e=>e.preventDefault());
+cv.addEventListener('contextmenu',e=>{e.preventDefault();if(!started||me.dead)return;
+  if(pendingSkill){pendingSkill=null;updCursor();msg('Alvo cancelado.','#c0c8e0');return}
+  mouse.x=e.clientX/SCALE;mouse.y=e.clientY/SCALE;mouse.overUI=false;openCtx(e.clientX,e.clientY)});
+// ---------- menu de contexto
+function closeCtx(){$('ctx').classList.add('hidden')}
+function overMe(mx,my){const s=scr(me);return mx>=s.x-9&&mx<=s.x+9&&my>=s.y-30&&my<=s.y+4}
+function goSkill(id,T){if(!canUse(id,true))return;if(ACTIVE[id].self){me.path=[];me.target=null;startSkill(id,me)}else castOn(id,T)}
+function openCtx(cx,cy){
+  const h=pickAt(mouse.x,mouse.y),b=h?null:bldAt(mouse.x,mouse.y),t=mouseTile();let head='',ops=[];
+  const sitOp={label:me.sit?'Levantar':'Sentar (X)',fn:()=>{if(!me.moving&&!me.cast){me.sit=!me.sit;me.target=null;sfx('sit')}}};
+  if(h&&h.kind==='mon'){const m=h.e,d=m.def;head=`${d.name} · Nv. ${d.lv}`;
+    ops.push({label:'Atacar',fn:()=>{me.target=m;me.queued=null;me.npc=null;me.pick=null;me.repath=0;me.sit=false}});
+    const sk=me.learned.filter(id=>!ACTIVE[id].self);
+    for(const id of sk)ops.push({label:`${ACTIVE[id].name} (SP ${skillCost(id)})`,off:!canUse(id,false),fn:()=>goSkill(id,m)});
+    ops.push({sep:1},{label:'Examinar',fn:()=>msg(`${d.name} · Nível ${d.lv} · ${ELN[d.el]} · HP ${Math.ceil(m.hp)}/${d.hp} · ${d.aggro?'agressivo: ataca quem chega perto':'passivo: só reage se atacado'}.`,'#d8e8ff')})}
+  else if(h&&h.kind==='npc'){const n=h.e;head=n.name;
+    ops.push({label:'Conversar',fn:()=>{me.npc=n;me.target=null;me.pick=null;if(dist(me.x,me.y,n.x,n.y)>2.3)moveTo(n.x,n.y)}})}
+  else if(h&&h.kind==='item'){const it=h.e,d=ITEMS[it.id];head=d.name;
+    ops.push({label:'Pegar',fn:()=>{me.pick=it;me.target=null;me.npc=null;moveTo(it.x,it.y)}},{label:'Examinar',fn:()=>msg(`${d.name}: ${d.desc}`,'#d8e8ff')})}
+  else if(b){head=b.name;ops.push({label:'Entrar',fn:()=>{me.target=null;me.npc=null;me.pick=null;moveTo(b.door.x,b.door.y,true)}})}
+  else if(overMe(mouse.x,mouse.y)){head=me.name;
+    ops.push(sitOp);for(const id of me.learned.filter(id=>ACTIVE[id].self))ops.push({label:`${ACTIVE[id].name} (SP ${skillCost(id)})`,off:!canUse(id,false),fn:()=>goSkill(id,me)});
+    ops.push({sep:1},{label:'Status (A)',fn:()=>toggle('winStats')},{label:'Itens (E)',fn:()=>toggle('winInv')},{label:'Habilidades (S)',fn:()=>toggle('winSkill')})}
+  else{
+    if(t&&walkable(t.x,t.y))ops.push({label:'Andar até aqui',fn:()=>{me.target=null;me.npc=null;me.pick=null;me.queued=null;moveTo(t.x,t.y,true)}});
+    ops.push(sitOp);
+    if(scene!=='world')ops.push({label:'Sair daqui',fn:()=>{const rm=ROOMS[scene];me.target=null;me.npc=null;moveTo(rm.ex,rm.ey,true)}});
+    ops.push({sep:1},{label:'Menu (Esc)',fn:openMenu})}
+  ops.push({sep:1},{label:'Cancelar',fn:()=>{}});
+  const el=$('ctx');el.innerHTML=(head?`<div class="ch">${head}</div>`:'')+ops.map((o,i)=>o.sep?'<div class="sep"></div>':`<div class="op${o.off?' off':''}" data-i="${i}">${o.label}</div>`).join('');
+  el._ops=ops;el.classList.remove('hidden');
+  const r=el.getBoundingClientRect();el.style.left=Math.min(cx,innerWidth-r.width-4)+'px';el.style.top=Math.min(cy,innerHeight-r.height-4)+'px';
+  if(curCursor)el.querySelectorAll('.op').forEach(e=>e.style.cursor=curCursor);sfx('click');
+}
+$('ctx').addEventListener('mousedown',e=>{e.stopPropagation();const o=e.target.closest('[data-i]');if(!o)return;const op=$('ctx')._ops[+o.dataset.i];if(op.off)return;closeCtx();sfx('click');op.fn()});
+$('ctx').addEventListener('contextmenu',e=>e.preventDefault());
+addEventListener('mousedown',e=>{if(!e.target.closest('#ctx'))closeCtx()},true);
 function moveTo(x,y,mark){
   const p=pathTo(me,x,y);if(!p)return false;me.path=p;me.sit=false;
   if(mark&&p.length){const l=p[p.length-1];marker={x:l[0],y:l[1],t:0}}return true;
@@ -1555,7 +1596,7 @@ addEventListener('keydown',e=>{
     case'a':toggle('winStats');break;case'e':case'i':toggle('winInv');break;case's':toggle('winSkill');break;case'h':toggle('winHelp');break;
     case'x':case'insert':if(!me.dead&&!me.moving&&!me.cast){me.sit=!me.sit;me.target=null;sfx('sit')}break;
     case'enter':chatIn.focus();e.preventDefault();break;
-    case'escape':{const ws=['winStats','winInv','winSkill','winHelp','winShop','winDlg','winLearn','winGuild'].filter(w=>!$(w).classList.contains('hidden'));
+    case'escape':{if(!$('ctx').classList.contains('hidden')){closeCtx();break}const ws=['winStats','winInv','winSkill','winHelp','winShop','winDlg','winLearn','winGuild'].filter(w=>!$(w).classList.contains('hidden'));
       if(!$('winMenu').classList.contains('hidden'))closeMenu();else if(ws.length||pendingSkill){ws.forEach(w=>$(w).classList.add('hidden'));pendingSkill=null;updCursor()}else openMenu();break}
   }
 });
@@ -1949,10 +1990,19 @@ function loop(now){
 function boot(){
   buildCursors();setCur('arrow');buildSprites();genMap();makeNPCs();buildGround();buildRooms();
   for(let i=0;i<36;i++)petals.push({x:rand(0,W),y:rand(0,H),vx:rand(6,16),vy:rand(8,18),ph:rand(0,6),col:pick(['#ffc0d8','#ffe0ec','#ffffff','#f8a8c8'])});
-  const chars=loadChars(),names=Object.keys(chars).sort((a,b)=>(chars[b].at||0)-(chars[a].at||0));
-  if(names.length){$('charBox').classList.remove('hidden');$('nameIn').value='';
-    $('charList').innerHTML=names.map(n=>`<div class="ch"><span><b>${n.replace(/</g,'&lt;')}</b> <small style="color:#6a7698">Combate ${chars[n].cb||1} · ${fmt(chars[n].zeny||0)}c</small></span><button data-play="${esc(n)}">Jogar</button></div>`).join('');
-    $('charList').onclick=e=>{const b=e.target.closest('[data-play]');if(!b)return;audio();sfx('click');startGame(chars[b.dataset.play])}}
+  const chars=loadChars();let delAsk=null;
+  const drawChars=()=>{const names=Object.keys(chars).sort((a,b)=>(chars[b].at||0)-(chars[a].at||0));
+    $('charBox').classList.toggle('hidden',!names.length);
+    $('charList').innerHTML=names.map(n=>{const nm=n.replace(/</g,'&lt;');return delAsk===n
+      ?`<div class="ch"><span style="color:#c03030">Apagar <b>${nm}</b> para sempre?</span><span><button data-delok="${esc(n)}">Apagar</button><button data-delno="1">Cancelar</button></span></div>`
+      :`<div class="ch"><span><b>${nm}</b> <small style="color:#6a7698">Combate ${chars[n].cb||1} · ${fmt(chars[n].zeny||0)}c</small></span><span><button data-play="${esc(n)}">Jogar</button><button data-del="${esc(n)}" title="Apagar personagem">Apagar</button></span></div>`}).join('')};
+  if(Object.keys(chars).length)$('nameIn').value='';
+  drawChars();
+  $('charList').onclick=e=>{
+    const b=e.target.closest('[data-play]');if(b){audio();sfx('click');startGame(chars[b.dataset.play]);return}
+    const d=e.target.closest('[data-del]');if(d){delAsk=d.dataset.del;drawChars();return}
+    const ok=e.target.closest('[data-delok]');if(ok){const n=ok.dataset.delok;delete chars[n];try{const all=loadChars();delete all[n];localStorage.setItem(CHARS_KEY,JSON.stringify(all))}catch(er){}delAsk=null;drawChars();return}
+    if(e.target.closest('[data-delno]')){delAsk=null;drawChars()}};
   $('loading').textContent='Clique em um botão para começar.';
   $('btnNew').onclick=()=>{audio();sfx('click');const n=$('nameIn').value.trim().slice(0,16);if(!n){$('titleErr').textContent='Digite um nome.';return}if(chars[n]){$('titleErr').textContent='Já existe um personagem com esse nome.';return}startGame({name:n})};
   (function titleLoop(){if(started)return;TIME+=1/60;const t=TIME*.15;g.fillStyle='#0d1a0f';g.fillRect(0,0,W,H);const s=iso(C+Math.cos(t)*6,C+Math.sin(t)*6);g.drawImage(groundC,-Math.round(s.x-W/2),-Math.round(s.y-H/2));requestAnimationFrame(titleLoop)})();
