@@ -1,7 +1,7 @@
 {
  "imagem": "cabelo_m1.png",
- "largura": 4032,
- "altura": 336,
+ "largura": 2016,
+ "altura": 504,
  "nota": "Camada sem contorno; o jogo empilha capa, pernas, cabelo (trás), tronco, cabelo (meio), cabeça, cabelo (frente) e arma, e contorna o conjunto. Pele \"Clara\" e cabelo \"Castanho\" são trocados por paleta.",
  "celula": {
   "w": 168,
@@ -177,85 +177,85 @@
    "k": 4
   },
   "hairC_b_idle_0": {
-   "x": 2036,
-   "y": 170,
+   "x": 20,
+   "y": 338,
    "w": 128,
    "h": 164,
    "k": 4
   },
   "hairC_b_idle_1": {
-   "x": 2204,
-   "y": 170,
+   "x": 188,
+   "y": 338,
    "w": 128,
    "h": 164,
    "k": 4
   },
   "hairC_b_walk_0": {
-   "x": 2372,
-   "y": 170,
+   "x": 356,
+   "y": 338,
    "w": 128,
    "h": 164,
    "k": 4
   },
   "hairC_b_walk_1": {
-   "x": 2540,
-   "y": 170,
+   "x": 524,
+   "y": 338,
    "w": 128,
    "h": 164,
    "k": 4
   },
   "hairC_b_walk_2": {
-   "x": 2708,
-   "y": 170,
+   "x": 692,
+   "y": 338,
    "w": 128,
    "h": 164,
    "k": 4
   },
   "hairC_b_walk_3": {
-   "x": 2876,
-   "y": 170,
+   "x": 860,
+   "y": 338,
    "w": 128,
    "h": 164,
    "k": 4
   },
   "hairC_b_attack_0": {
-   "x": 3044,
-   "y": 170,
+   "x": 1028,
+   "y": 338,
    "w": 128,
    "h": 164,
    "k": 4
   },
   "hairC_b_attack_1": {
-   "x": 3212,
-   "y": 170,
+   "x": 1196,
+   "y": 338,
    "w": 128,
    "h": 164,
    "k": 4
   },
   "hairC_b_attack_2": {
-   "x": 3380,
-   "y": 170,
+   "x": 1364,
+   "y": 338,
    "w": 128,
    "h": 164,
    "k": 4
   },
   "hairC_b_cast_0": {
-   "x": 3548,
-   "y": 170,
+   "x": 1532,
+   "y": 338,
    "w": 128,
    "h": 164,
    "k": 4
   },
   "hairC_b_sit_0": {
-   "x": 3716,
-   "y": 170,
+   "x": 1700,
+   "y": 338,
    "w": 128,
    "h": 164,
    "k": 4
   },
   "hairC_b_dead_0": {
-   "x": 3866,
-   "y": 206,
+   "x": 1850,
+   "y": 374,
    "w": 164,
    "h": 128,
    "k": 4

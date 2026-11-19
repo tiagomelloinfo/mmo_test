@@ -533,6 +533,12 @@ function hcv(w,h){const c=canvas(w*KH,h*KH);c.k=KH;c.getContext('2d').setTransfo
 // tecido com dobras, cabelo em mechas, rosto proporcional. Mesmo tamanho e mesma base (pés) de antes.
 // humanos realistas em 4x: proporções de ~4,3 cabeças, volume por luz (cima-esquerda),
 // tecido com dobras, cabelo em mechas, rosto proporcional. Mesmo tamanho e mesma base (pés) de antes.
+// humanos realistas em 4x: proporções de ~4,3 cabeças, volume por luz (cima-esquerda),
+// tecido com dobras, cabelo em mechas, rosto proporcional. Mesmo tamanho e mesma base (pés) de antes.
+// humanos realistas em 4x: proporções de ~4,3 cabeças, volume por luz (cima-esquerda),
+// tecido com dobras, cabelo em mechas, rosto proporcional. Mesmo tamanho e mesma base (pés) de antes.
+// humanos realistas em 4x: proporções de ~4,3 cabeças, volume por luz (cima-esquerda),
+// tecido com dobras, cabelo em mechas, rosto proporcional. Mesmo tamanho e mesma base (pés) de antes.
 function sprHuman(o,dir,state,f){
   const LW=32,LH=41,c=hcv(LW,LH),q=c.getContext('2d'),OX=6,OY=9.5,Q=.25;
   const sn=v=>Math.floor(v*4+1e-6)/4;
@@ -545,7 +551,7 @@ function sprHuman(o,dir,state,f){
   const mix=(a,b,t)=>{const A=rgb(a),B=rgb(b);return'#'+A.map((v,i)=>Math.max(0,Math.min(255,Math.round(v+(B[i]-v)*t))).toString(16).padStart(2,'0')).join('')};
   // rampa de 6 tons com sombra fria e luz quente
   const ramp=b=>[mix(b,'#160c24',.6),mix(b,'#22163a',.4),mix(b,'#2a2244',.18),mix(b,'#000000',0),mix(b,'#fff2d0',.22),mix(b,'#fffaf0',.46)];
-  const rmat=(r,tex)=>(l,X,Y,s,t)=>{const i=l*5.3-.35+(tex?tex(X,Y,s,t):0);return r[Math.max(0,Math.min(5,Math.round(i)))]};
+  const rmat=(r,tex)=>(l,X,Y,s,t)=>{const v=l+(tex?tex(X,Y,s,t)*.12:0);return r[v<.16?1:v<.46?2:v<.84?3:4]};   // faixas chapadas (anime)
   const Lx=-.5,Ly=-.55,Lz=.67;
   const curve=(pts,v)=>{if(v<=pts[0][0])return pts[0][1];for(let i=1;i<pts.length;i++)if(v<=pts[i][0]){const[a0,b0]=pts[i-1],[a1,b1]=pts[i],t=(v-a0)/(a1-a0),k=(1-Math.cos(t*Math.PI))/2;return b0+(b1-b0)*k}return pts[pts.length-1][1]};
   // ---- primitivas com volume
@@ -559,7 +565,7 @@ function sprHuman(o,dir,state,f){
   if(state==='walk'){if(f===1){lL=1;aL=1;aR=-1;by=-.5}if(f===3){lR=1;aL=-1;aR=1;by=-.5}}
   if(state==='sit')by=4;
   const hb=by+(state==='idle'&&f===1?.25:0);
-  const FEM=o.sex==='f',HS=HAIRSTYLES[o.hs]||HAIRSTYLES.npc,HX=10,HY=1.5+hb;
+  const FEM=o.sex==='f',HS=HAIRSTYLES[o.hs]||HAIRSTYLES.npc,HX=10,HY=3.1+hb;
   let hand=[15.2,17.4+by+aR],tip=[18.2,23.4+by+aR];
   if(state==='attack'){hand=[[14.5,1.5],[17,7],[16.5,13]][f];tip=[[9,-6],[23,4],[21,20]][f]}
   if(state==='cast'){hand=[15.8,4+by];tip=[17.8,-3+by]}
@@ -579,8 +585,9 @@ function sprHuman(o,dir,state,f){
     else if(o.wtype==='machado'){const[tx,ty]=at(1);ln(hx,hy,tx,ty,'#8e6034');ln(hx+.5,hy,tx+.5,ty,'#6b4426',.5);p(tx-2.5,ty-2.5,4.5,4.5,o.bladeD);p(tx-2.5,ty-2.5,3.5,3.5,o.blade);p(tx-2.5,ty-2.5,.5,3.5,L);p(tx-2.25,ty-2.25,.25,3,'#ffffff');p(tx-.5,ty-.5,1,1,'#5a3a20');p(tx-.25,ty-.25,.5,.5,'#8e6034')}
     else if(o.wtype==='maca'){const[tx,ty]=at(.95),mL=o.maceL||'#a8b0c0',mD=o.maceD||'#6a7080';ln(hx,hy,tx,ty,'#6b4426');p(tx-2,ty-2,4,4,mD);p(tx-2,ty-2,3,3,mL);p(tx-1.5,ty-1.5,1,1,'#ffffff');p(tx-3,ty-.5,1,1,mD);p(tx+2,ty-.5,1,1,mD);p(tx-.5,ty-3,1,1,mD);p(tx-.5,ty+2,1,1,mD)}
   };
-  const hair=rmat(HR,(X,Y)=>{const id=Math.round((X-HX)*4/(1+(Y-HY+4)*.12));const h=hsh(id,5);return(h-.5)*1.1+(hsh(id,Math.floor(Y*1.4))-.5)*.3-(h>.84?.9:0)});
-  const vhair=rmat(HR,(X,Y)=>{const id=Math.round(X*4);const h=hsh(id,7);return(h-.5)*1.1-(h>.84?.9:0)});   // fios verticais (cabelo comprido)
+  const hband=(l,h)=>{const v=l+(h-.5)*.14;let i=v<.2?1:v<.5?2:v<.86?3:4;if(h>.88&&i>1)i--;return HR[i]};
+  const hair=(l,X,Y)=>hband(l,hsh(Math.round((X-HX)*4/(1+(Y-HY+4)*.12)),5));
+  const vhair=(l,X,Y)=>hband(l,hsh(Math.round(X*4),7));   // fios verticais (cabelo comprido)
   const JA=HS.jag??.075,JN=HS.jagN??11,VOL=HS.vol||1,SIDE=HS.sides??4.3;
   const jag=(X,Y,cy)=>{const a=Math.atan2(Y-cy,X-HX),u=(a+Math.PI)*JN/(2*Math.PI),fr=u-Math.floor(u);return Y<cy+.5?1+JA*(1-Math.abs(fr-.5)*2)*(.6+hsh(Math.floor(u),9)*.8):1};
   const crown=(X,Y,cy)=>{const dx=(X-HX)/(3.95*VOL),dy=(Y-cy)/(4.15*VOL),j=jag(X,Y,cy);return dx*dx+dy*dy<=j*j};
@@ -682,7 +689,7 @@ function sprHuman(o,dir,state,f){
   cur='head';
   // ---- pescoço e cabeça
   const RX=FEM?3.35:3.5,RY=3.95;
-  limb(10,4.4+hb,10,7.4+by,FEM?.92:1.05,FEM?1:1.12,(l,X,Y)=>skin(Math.max(0,l-(Y<6.2+hb?.35:0)),X,Y));
+  limb(10,HY+2.9,10,7.4+by,FEM?.92:1.05,FEM?1:1.12,(l,X,Y)=>skin(Math.max(0,l-(Y<6.2+hb?.35:0)),X,Y));
   const headAt=(X,Y)=>{const dy=(Y-HY)/RY;let rx=RX;if(Y>HY+1)rx=RX*(1-Math.pow((Y-HY-1)/(RY-1),1.6)*(FEM?.5:.42));const dx=(X-HX)/rx;const d=dx*dx+dy*dy;return d<=1?{dx,dy,d}:null};
   if(front){
     cur='hairB';if(HS.highpony||HS.bun)tails('f');
@@ -693,16 +700,21 @@ function sprHuman(o,dir,state,f){
     cur='hairC';if(!HS.buzz&&!HS.forehead)for(let x=-2.75;x<2.75;x+=Q)px(HX+x,HY-.6+Math.abs(x)*.05,SK[2]);cur='head';
     // olhos: cílio, branco, íris em três tons, pupila e brilho
     const E=o.eye,ED=mix(E,'#000000',.5),EL=mix(E,'#ffffff',.35);
-    for(const[x0,out]of[[7.75,-1],[10.5,1]]){const ey=HY+.45;
-      for(let x=0;x<1.75;x+=Q)px(x0+x,ey,'#2a1418');px(out<0?x0-.25:x0+1.75,ey+.25,'#2a1418');
-      if(FEM){px(out<0?x0-.5:x0+2,ey,'#2a1418');px(out<0?x0-.25:x0+1.75,ey-.25,'#2a1418');px(out<0?x0:x0+1.5,ey-.25,'#2a1418')}
-      for(let x=0;x<1.75;x+=Q)for(let r=0;r<3;r++){const ix=x>=.25&&x<1.25;let col=ix?(r===0?ED:r===1?E:EL):'#f2ece6';if(ix&&r===1&&x>=.5&&x<.75)col='#0e0810';if(ix&&r===1&&x<.5)col='#ffffff';px(x0+x,ey+.25+r*.25,col)}
-      for(let x=.25;x<1.5;x+=Q)px(x0+x,ey+1,SK[2])}
-    for(let x=0;x<1.75;x+=Q){px(7.5+x,HY-.4+(x<.5?.25:0),o.hair[0]);px(10.75+x,HY-.4+(x>1.25?.25:0),o.hair[0])}
-    px(10.25,HY+1.75,SK[1]);px(10.25,HY+2,SK[1]);px(10,HY+2,SK[2]);px(9.75,HY+1.5,SK[4]);
-    if(FEM){for(let x=9.5;x<10.75;x+=Q)px(x,HY+2.85,x<9.75||x>10.25?mix(o.skin,'#c05a5a',.45):'#b04a50');px(9.75,HY+3.1,mix(o.skin,'#e07070',.4));px(10,HY+3.1,mix(o.skin,'#e07070',.4))}
-    else{for(let x=9.5;x<10.75;x+=Q)px(x,HY+2.85,x<9.75||x>10.25?SK[1]:'#a0544c');px(9.75,HY+3.1,SK[4]);px(10,HY+3.1,SK[4])}
-    for(const bx of[7.75,11.75])for(let x=0;x<.5;x+=Q)px(bx+x,HY+1.75,mix(o.skin,'#f08080',FEM?.3:.22));
+    for(const[x0,out]of[[7.6,-1],[10.65,1]]){const ey=HY+.55,W2=1.75;
+      // cílio de cima grosso, com ponta para fora
+      for(let x=-.25;x<W2+.25;x+=Q){px(x0+x,ey,'#1e1016');if(x>=0&&x<W2)px(x0+x,ey+.25,'#2a1418')}
+      px(out<0?x0-.5:x0+W2+.25,ey+.25,'#1e1016');px(out<0?x0-.5:x0+W2+.25,ey+.5,'#2a1418');
+      if(FEM){px(out<0?x0-.75:x0+W2+.5,ey,'#1e1016');px(out<0?x0-.5:x0+W2+.25,ey-.25,'#1e1016')}
+      // olho grande: branco nas bordas, íris em degradê, pupila e dois brilhos
+      for(let r=0;r<4;r++)for(let x=0;x<W2;x+=Q){const ix=x>=.25&&x<1.5;let col=ix?[ED,mix(E,ED,.4),E,EL][r]:(r<3?'#f6f2f0':SK[2]);
+        if(ix&&(r===1||r===2)&&x>=.75&&x<1)col='#0e0810';px(x0+x,ey+.5+r*.25,col)}
+      px(x0+.5,ey+.5,'#ffffff');px(x0+.25,ey+.75,'#ffffff');px(x0+.5,ey+.75,'#ffffff');px(x0+1.25,ey+1,'#ffffff');
+      for(let x=.5;x<1.5;x+=Q)px(x0+x,ey+1.5,SK[1])}
+    for(let x=0;x<1.75;x+=Q){px(7.4+x,HY-.4+(x<.5?.25:0),o.hair[0]);px(10.85+x,HY-.4+(x>1.25?.25:0),o.hair[0])}
+    px(10.25,HY+2.3,SK[2]);px(10.25,HY+2.55,SK[1]);
+    if(FEM){for(let x=9.5;x<10.75;x+=Q)px(x,HY+3.0,x<9.75||x>10.25?mix(o.skin,'#c05a5a',.45):'#b04a50');px(9.75,HY+3.25,mix(o.skin,'#e07070',.4));px(10,HY+3.25,mix(o.skin,'#e07070',.4))}
+    else{for(let x=9.5;x<10.75;x+=Q)px(x,HY+3.0,x<9.75||x>10.25?SK[1]:'#a0544c');px(9.75,HY+3.25,SK[4]);px(10,HY+3.25,SK[4])}
+    for(const bx of[7.5,11.75])for(let x=0;x<.75;x+=Q){px(bx+x,HY+2.25,mix(o.skin,'#f08080',FEM?.3:.22));if(x>0&&x<.5)px(bx+x,HY+2.5,mix(o.skin,'#f08080',FEM?.3:.22))}
     if(o.beard){const BRd=ramp(o.beard),bm=rmat(BRd,(X)=>(hsh(Math.round(X*4),3)-.5)*1);
       for(let y=sn(HY+1.5);y<HY+5.6;y+=Q)for(let x=sn(HX-3.4);x<HX+3.4;x+=Q){const X=x+.125,Y=y+.125,h=headAt(X,Math.min(Y,HY+RY-.1));const yy=Y-HY;const w=yy<3.9?3.4:3.4-(yy-3.9)*1.6;if(Math.abs(X-HX)>w)continue;if(!h&&yy<3.6)continue;if(yy<2.4&&Math.abs(X-HX)<1.9)continue;
         if(yy>2.6&&yy<3.2&&Math.abs(X-HX)<.7){px(x,y,'#4a2a28');continue}px(x,y,bm(.55-(X-HX)/7-(yy>3.5?.15:0),X,Y))}
@@ -2753,7 +2765,7 @@ function buildSprites(){
 // =====================================================================
 const GERAR=/[?&]gerar/.test(location.search)||location.protocol==='file:';
 const SEED_VILA=20261119,SEED_BOSQUE=20261120;
-const ASSETS={ok:false,layers:{},npc:{},mon:{},ground:{},rooms:{}};
+const ASSETS={ok:false,layers:{},npc:{},mon:{},ground:{},rooms:{},heroArt:null};
 function withSeed(seed,fn){let a=seed>>>0;const r0=Math.random;Math.random=()=>{a=(a+0x6D2B79F5)|0;let t=Math.imul(a^(a>>>15),1|a);t=(t+Math.imul(t^(t>>>7),61|t))^t;return((t^(t>>>14))>>>0)/4294967296};try{return fn()}finally{Math.random=r0}}
 function loadImg(src){return new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=()=>rej(new Error('não carregou '+src));i.src=src})}
 async function loadSheet(base){
@@ -2772,6 +2784,7 @@ async function loadAssets(){
   {const sh=sheets[i++];for(const n in sh)ASSETS.npc[n]=sh[n].c}
   {const sh=sheets[i++];for(const n in sh)ASSETS.mon[n]=sh[n].c}
   {const sh=sheets[i++];for(const n in sh)ASSETS.rooms[n]={c:sh[n].c,off:sh[n].meta.off}}
+  if(man.protagonista){const sh=await loadSheet(man.protagonista);ASSETS.heroArt={};for(const n in sh)ASSETS.heroArt[n]=sh[n].c}
   const gs=await Promise.all(Object.values(man.chao).map(f=>loadImg('assets/'+f)));Object.keys(man.chao).forEach((k,j)=>ASSETS.ground[k]=gs[j]);
   ASSETS.ok=true;
 }
@@ -2787,6 +2800,10 @@ const HERO_BASE={sk:1,hc:2};
 function heroComposite(A,eq,conjEl,dir,state,f){
   A=Object.assign({},APP_DEF,A||{});
   const arm=eq.armor||'nenhuma',legs=eq.legs||'nenhuma',wpn=conjEl?(CONJ[conjEl].wt==='desarmado'?null:'cj_'+conjEl):eq.weapon,pose=dir+'_'+state+'_'+f;
+  if(ASSETS.heroArt){const art=ASSETS.heroArt[pose]||ASSETS.heroArt[dir+'_idle_0'];
+    return cached(['ha',wpn,pose].join('|'),()=>{const wl=wpn&&ASSETS.layers['arma_'+wpn]&&ASSETS.layers['arma_'+wpn][pose];if(!wl)return art;
+      const wo=outline(wl,'#1a1020',2),k=art.k,c=canvas(art.width,art.height);c.k=k;const q=c.getContext('2d');q.imageSmoothingEnabled=false;const dw=wo.width/KH*k,dh=wo.height/KH*k;
+      if(dir==='b'){q.drawImage(wo,0,0,dw,dh);q.drawImage(art,0,0)}else{q.drawImage(art,0,0);q.drawImage(wo,0,0,dw,dh)}return c})}
   return cached(['hc',A.sex,A.hs,A.hc,A.sk,arm,legs,wpn,pose].join('|'),()=>{
     const L=ASSETS.layers;
     const sm=A.sk===HERO_BASE.sk?null:cached('skm'+A.sk,()=>colorMap(skinDerived(SKIN_TONES[HERO_BASE.sk].c[0]),skinDerived(SKIN_TONES[A.sk].c[0])));

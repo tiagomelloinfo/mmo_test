@@ -34,9 +34,21 @@ async function exportarAssets(log=console.log){
   const pkey=([d,st,f])=>`${d}_${st}_${f}`;
   const BASE={sex:'m',hs:'m1',hc:2,sk:1},EQ0={armor:'camiseta',legs:'jeans',weapon:null};
   const lk=(A,eq,conj)=>heroLookFrom(Object.assign({},BASE,A),Object.assign({},EQ0,eq),conj);
-  const camada=(L,layer,pre='')=>({frames:POSES.map(ps=>{const cv=sprHuman(Object.assign({},L,{layer,id:L.id+'_'+layer}),...ps);return{name:pre+pkey(ps),cv:vazio(cv)?null:cv}})});
+  const camada=(L,layer,pre='')=>['f','b'].map(d=>({frames:POSES.filter(ps=>ps[0]===d).map(ps=>{const cv=sprHuman(Object.assign({},L,{layer,id:L.id+'_'+layer}),...ps);return{name:pre+pkey(ps),cv:vazio(cv)?null:cv}})}));
   const nota='Camada sem contorno; o jogo empilha capa, pernas, cabelo (trás), tronco, cabelo (meio), cabeça, cabelo (frente) e arma, e contorna o conjunto. Pele "Clara" e cabelo "Castanho" são trocados por paleta.';
-  const salvarCamada=async(id,L,layers)=>{const rows=[];for(const ly of layers)rows.push(camada(L,ly,layers.length>1?ly+'_':''));await salvar('personagem/camadas/'+id,grid(rows),{nota});man.camadas.push('personagem/camadas/'+id)};
+  // folha-molde: a camada atual em transparência, ampliada 2x, com o quadro, a linha dos pés, o centro e a paleta-base
+  const salvarMolde=async(id,res)=>{const S=2,TOP=48,o=document.createElement('canvas');o.width=Math.max(560,res.out.width*S);o.height=res.out.height*S+TOP;const q=o.getContext('2d');
+    q.fillStyle='#ffffff';q.fillRect(0,0,o.width,o.height);q.imageSmoothingEnabled=false;q.font='12px sans-serif';
+    q.fillStyle='#000';q.fillText('Pele base',4,15);skinDerived(SKIN_TONES[1].c[0]).slice(0,6).forEach((c,i)=>{q.fillStyle=c;q.fillRect(80+i*18,4,16,14)});
+    q.fillStyle='#000';q.fillText('Cabelo base',4,37);hairDerived(HAIR_COLORS[2].c).forEach((c,i)=>{q.fillStyle=c;q.fillRect(80+i*18,26,16,14)});
+    q.fillStyle='#000';q.fillText(`${id}: quadro ${res.celula.w}x${res.celula.h} px no jogo (aqui ampliado ${S}x). Vermelho = pés, azul = centro do corpo.`,200,15);
+    q.fillText('Pinte pele e cabelo só com os tons-base acima: o jogo troca pela cor escolhida.',200,37);
+    q.globalAlpha=.45;q.drawImage(res.out,0,TOP,res.out.width*S,res.out.height*S);q.globalAlpha=1;
+    for(const n in res.quadros){const f=res.quadros[n],x=f.x*S,y=f.y*S+TOP,w=f.w*S,h=f.h*S,dead=n.includes('_dead_');
+      q.strokeStyle='#c8c8d0';q.lineWidth=1;q.strokeRect(x+.5,y+.5,w-1,h-1);
+      if(!dead){const fy=y+(27.4+9.5)*4*S,cx=x+16*4*S;q.fillStyle='#e03030';q.fillRect(x,fy,w,1);q.fillStyle='#3060e0';q.fillRect(cx,y,1,h)}}
+    await POST('moldes/'+id+'.png',o.toDataURL('image/png'))};
+  const salvarCamada=async(id,L,layers)=>{const rows=[];for(const ly of layers)rows.push(...camada(L,ly,layers.length>1?ly+'_':''));const res=grid(rows);await salvar('personagem/camadas/'+id,res,{nota});await salvarMolde(id,res);man.camadas.push('personagem/camadas/'+id)};
   await salvarCamada('capa_jaqueta',lk({},{armor:'jaqueta'}),['capeback']);
   for(const[nome,legs]of[['jeans','jeans'],['calca_v','calca_v'],['nenhuma',null]])await salvarCamada('pernas_'+nome,lk({},{legs}),['legs']);
   for(const sex of['m','f'])for(const[nome,armor]of[['camiseta','camiseta'],['roupa','roupa'],['jaqueta','jaqueta'],['cota','cota'],['nenhuma',null]])await salvarCamada(`tronco_${sex}_${nome}`,lk({sex},{armor}),['torso']);
