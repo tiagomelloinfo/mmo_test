@@ -531,12 +531,15 @@ function hcv(w,h){const c=canvas(w*KH,h*KH);c.k=KH;c.getContext('2d').setTransfo
 // tecido com dobras, cabelo em mechas, rosto proporcional. Mesmo tamanho e mesma base (pés) de antes.
 // humanos realistas em 4x: proporções de ~4,3 cabeças, volume por luz (cima-esquerda),
 // tecido com dobras, cabelo em mechas, rosto proporcional. Mesmo tamanho e mesma base (pés) de antes.
+// humanos realistas em 4x: proporções de ~4,3 cabeças, volume por luz (cima-esquerda),
+// tecido com dobras, cabelo em mechas, rosto proporcional. Mesmo tamanho e mesma base (pés) de antes.
 function sprHuman(o,dir,state,f){
   const LW=32,LH=41,c=hcv(LW,LH),q=c.getContext('2d'),OX=6,OY=9.5,Q=.25;
   const sn=v=>Math.floor(v*4+1e-6)/4;
-  const px=(x,y,col)=>{q.fillStyle=col;q.fillRect(sn(x+OX),sn(y+OY),Q,Q)};
-  const p=(x,y,w,h,col)=>{q.fillStyle=col;q.fillRect(sn(x+OX),sn(y+OY),w,h)};
-  const p0=P(q),ln=(a,b,c2,d,col,w)=>line(p0,a+OX,b+OY,c2+OX,d+OY,col,w);
+  const LYR=o.layer;let cur='x';
+  const px=(x,y,col)=>{if(LYR&&LYR!==cur)return;q.fillStyle=col;q.fillRect(sn(x+OX),sn(y+OY),Q,Q)};
+  const p=(x,y,w,h,col)=>{if(LYR&&LYR!==cur)return;q.fillStyle=col;q.fillRect(sn(x+OX),sn(y+OY),w,h)};
+  const p0=P(q),ln=(a,b,c2,d,col,w)=>(LYR&&LYR!==cur)?0:line(p0,a+OX,b+OY,c2+OX,d+OY,col,w);
   const hsh=(a,b)=>{let h=(a*374761393+b*668265263)^0x5bd1e995;h=Math.imul(h^(h>>>13),1274126177);return((h^(h>>>16))>>>0)/4294967296};
   const rgb=v=>String(v).startsWith('rgb')?String(v).match(/\d+/g).map(Number):hex(v);
   const mix=(a,b,t)=>{const A=rgb(a),B=rgb(b);return'#'+A.map((v,i)=>Math.max(0,Math.min(255,Math.round(v+(B[i]-v)*t))).toString(16).padStart(2,'0')).join('')};
@@ -608,8 +611,9 @@ function sprHuman(o,dir,state,f){
   const CP=o.cape,CR=CP&&ramp(CP);
   const capeShape=(dark)=>{const top=7.2+by,bot=23.6;for(let y=sn(top);y<bot+1;y+=Q){const t=(y-top)/(bot-top),w=4.7+t*1.6;for(let x=sn(10-w);x<10+w;x+=Q){const X=x+.125,Y=y+.125,hem=bot+((Math.floor(X*1.3)*7)%3)*.3;if(Y>hem)continue;
     const s=(X-10)/w,fold=Math.sin(X*2.1)*.18,l=Math.max(0,-s*.5+.55+fold-(dark?.3:0)-t*.15);px(x,y,CR[Math.max(0,Math.min(5,Math.round(l*5)))])}}};
-  if(CP&&front&&state!=='sit')capeShape(true);
-  if(!front)weapon();
+  cur='capeback';if(CP&&front&&state!=='sit')capeShape(true);
+  if(!front){cur='weapon';weapon()}
+  cur='legs';
   // ---- pernas
   const leg=(xh,lift,side)=>{const hy=16.3+by,ky=21.2+by-lift*.7,ay=25.6-lift,kx=xh+side*.08;
     if(o.tallBoot){limb(xh,hy,kx,ky,1.5,1.2,pants);limb(kx,ky,xh,ay,1.25,1.05,pants);limb(kx,ky+1.6,xh,ay,1.15,1,boot);for(let x=-1.2;x<1.2;x+=Q)px(xh+x,ky+1.5,BR[4])}
@@ -629,7 +633,8 @@ function sprHuman(o,dir,state,f){
   // roupa de baixo (sem calça equipada)
   if(o.bareLegs&&state!=='sit'&&!o.robe){const UR=ramp('#e8e0d0'),um=rmat(UR);limb(8,16.2+by,8,18.2+by-lL*.3,1.55,1.45,um);limb(12,16.2+by,12,18.2+by-lR*.3,1.55,1.45,um)}
   if(o.bareLegs&&state==='sit'){const um=rmat(ramp('#e8e0d0'));ellipsoid(8,20.4,1.75,1.1,um);ellipsoid(12,20.4,1.75,1.1,um)}
-  if(front&&!HS.buzz)longBack();
+  cur='hairA';if(front&&!HS.buzz)longBack();
+  cur='torso';
   // ---- tronco
   const TW=FEM?[[6.9,1.5],[7.4,3.2],[8.1,4.25],[9.2,4.5],[10.8,4.3],[12.6,3.45],[13.9,3.15],[15,3.6],[16,4.35],[16.8,4.6],[17.2,4.6]]:[[6.9,1.7],[7.4,3.7],[8.1,4.9],[9.2,5.1],[11,4.7],[13,4],[14.6,3.65],[15.6,3.8],[16.6,4.05],[17.2,4.05]];
   const torsoAt=(X,Y)=>{const yy=Y-by;if(yy<6.9||yy>17.2)return null;const w=curve(TW,yy);const s=(X-10)/w;if(Math.abs(s)>1)return null;return{w,s,yy}};
@@ -674,16 +679,18 @@ function sprHuman(o,dir,state,f){
     if(!front){capeShape(false);ellipsoid(10,7.4+by,3.9,1.6,rmat(CR))}
     else{for(let y=sn(6.5+by);y<8.9+by;y+=Q){const yy=y-by,w=yy<7.2?3+(yy-6.5)*2.6:4.8+(yy-7.2)*.3;for(let x=-w;x<w;x+=Q){if(yy>7.6&&Math.abs(x)<1.3+(yy-7.6)*1.2)continue;const l=.55-x/w*.35-(yy>8.4?.25:0);px(10+x,y,CR[Math.max(0,Math.min(5,Math.round(l*5)))])}}
       for(const[x,y]of[[9.75,8.5],[10,8.5],[9.75,8.75],[10,8.75]])px(x,y+by,'#d8a838');px(9.75,8.5+by,'#fff0a0')}}
+  cur='head';
   // ---- pescoço e cabeça
   const RX=FEM?3.35:3.5,RY=3.95;
   limb(10,4.4+hb,10,7.4+by,FEM?.92:1.05,FEM?1:1.12,(l,X,Y)=>skin(Math.max(0,l-(Y<6.2+hb?.35:0)),X,Y));
   const headAt=(X,Y)=>{const dy=(Y-HY)/RY;let rx=RX;if(Y>HY+1)rx=RX*(1-Math.pow((Y-HY-1)/(RY-1),1.6)*(FEM?.5:.42));const dx=(X-HX)/rx;const d=dx*dx+dy*dy;return d<=1?{dx,dy,d}:null};
   if(front){
-    if(HS.highpony||HS.bun)tails('f');
+    cur='hairB';if(HS.highpony||HS.bun)tails('f');
     if(!HS.buzz)ellipsoid(HX,HY-.6,4.25*VOL,4.4*VOL,hair,(X,Y)=>crown(X,Y,HY-.6)&&Y<HY+2.6);
+    cur='head';
     ellipsoid(HX-RX+.05,HY+.8,.55,.95,skin);ellipsoid(HX+RX-.05,HY+.8,.55,.95,skin);px(HX-RX,HY+.75,SK[1]);px(HX+RX-.25,HY+.75,SK[1]);
     for(let y=sn(HY-RY);y<HY+RY;y+=Q)for(let x=sn(HX-RX);x<HX+RX;x+=Q){const X=x+.125,Y=y+.125,h=headAt(X,Y);if(!h)continue;const nz=Math.sqrt(1-h.d);let l=Math.max(0,h.dx*Lx+h.dy*Ly*.6+nz*Lz)+.24;px(x,y,skin(l,X,Y))}
-    if(!HS.buzz&&!HS.forehead)for(let x=-2.75;x<2.75;x+=Q)px(HX+x,HY-.6+Math.abs(x)*.05,SK[2]);
+    cur='hairC';if(!HS.buzz&&!HS.forehead)for(let x=-2.75;x<2.75;x+=Q)px(HX+x,HY-.6+Math.abs(x)*.05,SK[2]);cur='head';
     // olhos: cílio, branco, íris em três tons, pupila e brilho
     const E=o.eye,ED=mix(E,'#000000',.5),EL=mix(E,'#ffffff',.35);
     for(const[x0,out]of[[7.75,-1],[10.5,1]]){const ey=HY+.45;
@@ -700,6 +707,7 @@ function sprHuman(o,dir,state,f){
       for(let y=sn(HY+1.5);y<HY+5.6;y+=Q)for(let x=sn(HX-3.4);x<HX+3.4;x+=Q){const X=x+.125,Y=y+.125,h=headAt(X,Math.min(Y,HY+RY-.1));const yy=Y-HY;const w=yy<3.9?3.4:3.4-(yy-3.9)*1.6;if(Math.abs(X-HX)>w)continue;if(!h&&yy<3.6)continue;if(yy<2.4&&Math.abs(X-HX)<1.9)continue;
         if(yy>2.6&&yy<3.2&&Math.abs(X-HX)<.7){px(x,y,'#4a2a28');continue}px(x,y,bm(.55-(X-HX)/7-(yy>3.5?.15:0),X,Y))}
       for(let x=-1.4;x<1.4;x+=Q)px(HX+x,HY+2.45+Math.abs(x)*.15,BRd[3])}
+    cur='hairC';
     // cabelo da frente
     if(HS.buzz){for(let y=sn(HY-RY-.3);y<HY+.6;y+=Q)for(let x=sn(HX-RX-.2);x<HX+RX+.2;x+=Q){const X=x+.125,Y=y+.125,dx=(X-HX)/(RX*1.05),dy=(Y-HY)/(RY*1.04);if(dx*dx+dy*dy>1)continue;const sd=Math.abs(X-HX),lim=HY-1+(sd>2.6?Math.min(1.5,(sd-2.6)*2.4):0);if(Y>lim)continue;
         if(HS.mohawk&&sd<1)continue;px(x,y,buzz(lit(X,Y,HY-.6),X,Y))}}
@@ -708,19 +716,20 @@ function sprHuman(o,dir,state,f){
     frontLocks();
     if(HS.quiff){ellipsoid(HX+.4,HY-4.3,3.2,1.8,(l,X,Y)=>shine(X,Y,-1.4)&&l>.45?HR[5]:hair(l,X,Y));for(let x=-2.6;x<3;x+=Q)px(HX+x+.4,HY-2.6+Math.sin(x*1.7)*.15,HR[1])}
     if(!HS.highpony&&!HS.bun)tails('f');
-  }else{
+  }else{cur='hairC';
     if(HS.buzz){for(let y=sn(HY-RY-.3);y<HY+3.4;y+=Q)for(let x=sn(HX-RX-.2);x<HX+RX+.2;x+=Q){const X=x+.125,Y=y+.125,dx=(X-HX)/(RX*1.05),dy=(Y-HY)/(RY*1.04);if(dx*dx+dy*dy>1)continue;if(HS.mohawk&&Math.abs(X-HX)<1&&Y<HY-1)continue;px(x,y,buzz(lit(X,Y,HY-.2),X,Y))}
       ellipsoid(HX-RX+.05,HY+.8,.55,.95,skin);ellipsoid(HX+RX-.05,HY+.8,.55,.95,skin)}
     else{const BE=(HS.back||3.6)<5.5?(HS.back||3.6):3.6;
       for(let y=sn(HY-5.4*VOL);y<HY+BE+1.2;y+=Q)for(let x=sn(HX-4.4*VOL);x<HX+4.4*VOL;x+=Q){const X=x+.125,Y=y+.125;const dx=(X-HX)/(3.95*VOL),dy=(Y-(HY-.2))/(4.6*VOL),j=jag(X,Y,HY-.2);if(dx*dx+dy*dy>j*j&&!(Y>HY&&Math.abs(X-HX)<3.9*VOL))continue;
         const u=(X-HX+4)/1.15,fr=u-Math.floor(u),ends=HS.straightEnds?HY+BE:HY+BE-.5+(1-Math.abs(fr-.5)*2)*(.6+hsh(Math.floor(u),4)*.9)-Math.abs(X-HX)*.12;if(Y>ends)continue;
         const l=lit(X,Y,HY-.2);px(x,y,shine(X,Y,.1)&&l>.45?HR[5]:hair(l,X,Y))}}
-    if(CP&&state!=='sit')ellipsoid(10,6.9+by,3.6,1.3,rmat(CR),(X,Y)=>Y>HY+3.4);
+    if(CP&&state!=='sit'){cur='torso';ellipsoid(10,6.9+by,3.6,1.3,rmat(CR),(X,Y)=>Y>HY+3.4);cur='hairC'}
     longBack();tails('b');
   }
   if(HS.mohawk){for(let y=sn(HY-6.4);y<HY-.6;y+=Q)for(let x=-1;x<1;x+=Q){const X=HX+x+.125,Y=y+.125,u=(Y-HY+6.4)/1.1,fr=u-Math.floor(u),edge=.95-(1-Math.abs(fr-.5)*2)*.55;if(Math.abs(x+.125)>edge)continue;if(Y>HY-3.6&&!front&&false)continue;px(HX+x,y,hair(.55-x*.3,X,Y))}}
   if(o.spiky||HS.spiky)for(const[x,h]of[[7.2,1.5],[8.8,2],[10.4,2.2],[12,1.9],[13.3,1.3]])for(let i=0;i<h;i+=Q){const w=(1-i/h)*.95;for(let xx=-w;xx<w;xx+=Q)px(x+xx,HY-4.2-i,HR[xx<0?4:2])}
   if(o.ahoge||HS.ahoge){for(let t=0;t<1;t+=.08){const x=HX+.3+t*1.1+Math.sin(t*3)*.25,y=HY-4.4-t*1.6;px(x,y,HR[3]);px(x+.25,y,HR[2])}px(HX+1.5,HY-6.1,HR[1])}
+  cur='hat';
   // ---- chapéus
   const H=o.hat;
   if(H==='bandana'){for(let x=-3.6;x<3.6;x+=Q){px(HX+x,HY-1.2,'#e85a50');px(HX+x,HY-.95,'#c83434');px(HX+x,HY-.7,'#962020')}
@@ -738,7 +747,8 @@ function sprHuman(o,dir,state,f){
     ellipsoid(HX,HY-.9,4.1,3.7,mm,(X,Y)=>Y<HY+.6);for(let x=-4;x<4;x+=Q){px(HX+x,HY+.4,MR[1]);px(HX+x,HY+.65,MR[0])}
     if(front)for(let y=0;y<1.6;y+=Q)px(HX,HY+.6+y,MR[2]);for(let x=-3.5;x<3.5;x+=1.4)px(HX+x,HY+.4,MR[5]);
     limb(HX,HY-4.4,HX-1.6,HY-6.3,.55,.35,rmat(ramp('#c83434')))}
-  if(front)weapon();
+  if(front){cur='weapon';weapon()}
+  if(LYR){c.k=KH;if(state==='dead'){const r=canvas(c.height,c.width),rq=r.getContext('2d');rq.translate(0,c.width);rq.rotate(-Math.PI/2);rq.drawImage(c,0,0);r.k=KH;return r}return c}
   const out=outline(c,'#1a1020',2);out.k=KH;
   if(state==='dead'){const r=canvas(out.height,out.width),rq=r.getContext('2d');rq.translate(0,out.width);rq.rotate(-Math.PI/2);rq.drawImage(out,0,0);r.k=KH;return r}
   return out;
@@ -1458,8 +1468,10 @@ function buildGround(){
   for(let k=0;k<4200*K*K;k++){const s=randPt();if(s.t!==T_GRASS&&s.t!==T_GRASS2)continue;const x=s.x+rand(-.5,.5),y=s.y+rand(-.5,.5);p(x,y-1,.5,1.5,s.t===T_GRASS?'#8cc85a':'#5c9a40');p(x-.5,y,.5,.5,'#2c5a22');p(x+.5,y-.5,.5,1,s.t===T_GRASS?'#74b04a':'#4a8436')}
   for(let k=0;k<900;k++){const s=randPt();if(s.t!==T_GRASS)continue;if(dist(s.tx,s.ty,C,C)<7)continue;const col=pick(['#fff4f0','#ffd84a','#ff7aa0','#b48aff','#ffffff']);p(s.x,s.y-1,1,1,col);p(s.x-1,s.y,1,1,col);p(s.x+1,s.y,1,1,col);p(s.x,s.y+1,1,1,col);p(s.x,s.y,1,1,'#f0c020');p(s.x+.5,s.y+.5,.5,.5,'#c89010');p(s.x,s.y-1,.5,.5,'#ffffff');p(s.x,s.y+2,.5,1.5,'#2c5a22')}
   for(let k=0;k<700*K*K;k++){const s=randPt();if(s.t!==T_DIRT&&s.t!==T_SAND)continue;const w=pick([.5,1,1.5]);p(s.x,s.y,w,.5,'#c8b898');p(s.x,s.y,.5,.5,'#ece0c4');p(s.x,s.y+.5,w,.5,'#5a4630');p(s.x+w,s.y+.5,.5,.5,'rgba(40,28,16,.5)')}
-  groundC=c;
-  miniBase=canvas(184,96);const mq=miniBase.getContext('2d');mq.imageSmoothingEnabled=true;mq.drawImage(c,0,0,c.width,c.height,0,0,184,96);
+  groundC=c;buildMini();
+}
+function buildMini(){
+  miniBase=canvas(184,96);const mq=miniBase.getContext('2d');mq.imageSmoothingEnabled=true;mq.drawImage(groundC,0,0,groundC.width,groundC.height,0,0,184,96);
   mq.fillStyle='#1c4020';for(const o of objects)if(o.kind==='tree'){const s=iso(o.x,o.y);mq.fillRect(s.x*184/GW-1,s.y*96/GH-1,2,2)}
   for(const o of objects)if(o.box){const b=o.box;mq.fillStyle=o.kind==='wall'?'#6b4426':o.mc;for(let y=b.by;y<b.by+b.fh;y++)for(let x=b.bx;x<b.bx+b.fw;x++){const s=iso(x+.5,y+.5);mq.fillRect(s.x*184/GW-1,s.y*96/GH-1,2,2)}}
 }
@@ -1682,18 +1694,18 @@ function flushXp(){
   for(const k of ks)delete xpPend[k];
   const box=$('xpd');box.appendChild(d);while(box.children.length>6)box.firstChild.remove();setTimeout(()=>d.remove(),2000);
 }
-function heroLook(){
-  const A=Object.assign({},APP_DEF,me.app||{});
-  const k='hero_'+A.sex+A.hs+'_'+A.hc+'_'+A.sk+'_'+(me.conj?'cj_'+me.conj.el:me.eq.weapon)+'_'+me.eq.armor+'_'+me.eq.legs;
-  return cached('look_'+k,()=>{const w=me.eq.weapon?ITEMS[me.eq.weapon]:null,SKN=SKIN_TONES[A.sk]||SKIN_TONES[1],x={sex:A.sex,hs:A.hs,hair:(HAIR_COLORS[A.hc]||HAIR_COLORS[2]).c,skin:SKN.c[0],skinD:SKN.c[1]};
-    if(me.eq.armor==='camiseta')Object.assign(x,{tunic:'#f2f2f4',tunicD:'#c4c8d2',trim:'#3a6ac8',belt:'#2a2a34',print:'#3a6ac8',short:1});
-    else if(me.eq.armor==='jaqueta')Object.assign(x,{tunic:'#4a7a3a',tunicD:'#33582a',trim:'#5a3a20',belt:'#5a3a20',cape:'#4a3a2c',pockets:1,strap:1});
-    else if(me.eq.armor==='cota')Object.assign(x,{armor:'#a8b0c0',armorD:'#707888'});
-    else if(!me.eq.armor)Object.assign(x,A.sex==='f'?{tunic:'#e8e0d0',tunicD:'#c8c0b0',trim:'#e8e0d0',belt:'#c8c0b0'}:{tunic:SKN.c[0],tunicD:SKN.c[1],trim:SKN.c[0]});
-    if(!me.eq.legs)Object.assign(x,{pants:SKN.c[0],pantsD:SKN.c[1],boot:SKN.c[0],bareLegs:1});
-    if(me.eq.legs==='calca_v')Object.assign(x,{pants:'#d8ccb0',pantsD:'#b0a284',boot:'#2e2622',tallBoot:1});
-    if(me.eq.legs==='jeans')Object.assign(x,{pants:'#3a5a9a',pantsD:'#2a4070',boot:'#f0f0f0',legsJeans:1});
-    if(me.conj){const c=CONJ[me.conj.el];Object.assign(x,c.wt==='desarmado'?{weapon:0}:{weapon:1,wtype:c.wt,blade:c.blade,bladeD:c.bladeD,maceL:c.blade,maceD:c.bladeD})}
+function heroLook(){return heroLookFrom(Object.assign({},APP_DEF,me.app||{}),me.eq,me.conj)}
+function heroLookFrom(A,eq,conj){
+  const k='hero_'+A.sex+A.hs+'_'+A.hc+'_'+A.sk+'_'+(conj?'cj_'+conj.el:eq.weapon)+'_'+eq.armor+'_'+eq.legs;
+  return cached('look_'+k,()=>{const w=eq.weapon?ITEMS[eq.weapon]:null,SKN=SKIN_TONES[A.sk]||SKIN_TONES[1],x={sex:A.sex,hs:A.hs,hair:(HAIR_COLORS[A.hc]||HAIR_COLORS[2]).c,skin:SKN.c[0],skinD:SKN.c[1]};
+    if(eq.armor==='camiseta')Object.assign(x,{tunic:'#f2f2f4',tunicD:'#c4c8d2',trim:'#3a6ac8',belt:'#2a2a34',print:'#3a6ac8',short:1});
+    else if(eq.armor==='jaqueta')Object.assign(x,{tunic:'#4a7a3a',tunicD:'#33582a',trim:'#5a3a20',belt:'#5a3a20',cape:'#4a3a2c',pockets:1,strap:1});
+    else if(eq.armor==='cota')Object.assign(x,{armor:'#a8b0c0',armorD:'#707888'});
+    else if(!eq.armor)Object.assign(x,A.sex==='f'?{tunic:'#e8e0d0',tunicD:'#c8c0b0',trim:'#e8e0d0',belt:'#c8c0b0'}:{tunic:SKN.c[0],tunicD:SKN.c[1],trim:SKN.c[0]});
+    if(!eq.legs)Object.assign(x,{pants:SKN.c[0],pantsD:SKN.c[1],boot:SKN.c[0],bareLegs:1});
+    if(eq.legs==='calca_v')Object.assign(x,{pants:'#d8ccb0',pantsD:'#b0a284',boot:'#2e2622',tallBoot:1});
+    if(eq.legs==='jeans')Object.assign(x,{pants:'#3a5a9a',pantsD:'#2a4070',boot:'#f0f0f0',legsJeans:1});
+    if(conj){const c=CONJ[conj.el];Object.assign(x,c.wt==='desarmado'?{weapon:0}:{weapon:1,wtype:c.wt,blade:c.blade,bladeD:c.bladeD,maceL:c.blade,maceD:c.bladeD})}
     else Object.assign(x,w?{weapon:1,wtype:w.wt,blade:w.blade||'#e6ecf6',bladeD:w.bladeD||'#8a93ad'}:{weapon:0});
     return Object.assign(look('hero',x),{id:k})});
 }
@@ -1749,6 +1761,7 @@ function makeMon(kind,r0,r1){
 function respawnMon(m){Object.assign(m,makeMon(m.kind,m.r0,m.r1))}
 function monSprite(m){
   const d=m.def,fr=m.stunT>0?0:Math.floor(m.anim*(m.moving?8:3))%4;
+  if(ASSETS.ok&&ASSETS.mon[m.kind+'_'+fr])return ASSETS.mon[m.kind+'_'+fr];
   return cached('m_'+m.kind+fr,()=>{
     let c;if(d.spr==='slime')c=sprSlime(R[d.ramp],fr,d.sprout);else if(d.spr==='bunny')c=sprBunny(fr);else if(d.spr==='boar')c=sprBoar(fr);else c=sprBeetle(fr);
     if(d.scale){const s=canvas(c.width*d.scale,c.height*d.scale),q=s.getContext('2d');q.imageSmoothingEnabled=false;q.drawImage(c,0,0,s.width,s.height);c=s}
@@ -1970,7 +1983,7 @@ function mapState(){return{snap:snapScene(),gc:groundC,mini:miniBase,reach:reach
 function goMap(id,x,y){
   if(scene!=='world')leaveRoom(false);
   Object.assign(MAPS[curMap],{snap:snapScene(),npcs,monsters,items});
-  if(!MAPS[id].snap){curMap=id;genForest();buildGround();Object.assign(MAPS[id],mapState(),{npcs:[]})}
+  if(!MAPS[id].snap){curMap=id;withSeed(SEED_BOSQUE,genForest);if(ASSETS.ok){groundC=ASSETS.ground.bosque;buildMini()}else withSeed(SEED_BOSQUE+1,buildGround);Object.assign(MAPS[id],mapState(),{npcs:[]})}
   const M=MAPS[id];curMap=id;
   loadScene(M.snap);groundC=M.gc;miniBase=M.mini;reach.set(M.reach);DOORS.length=0;for(const d of M.doors)DOORS.push(d);
   npcs=M.npcs;items=M.items||[];WORLDSNAP=M.snap;worldGC=M.gc;worldNPCs=M.npcs;gOff={x:0,y:0};projs.length=0;
@@ -2076,7 +2089,7 @@ function buildRooms(){
       if(k==='fire')o.glow={col:'#ffb040',y:8,r:18};if(k==='candle')o.glow={col:'#ffe08a',y:12,r:9};if(k==='cauldron')o.glow={col:'#7af07a',y:14,r:12}}
     const ns=rm.npcs.map(([nid,name,lk,x,y,flip])=>{const n={id:nid,name,look:Object.assign(look(lk),{id:lk}),x:rm.x0+x+.5,y:rm.y0+y+.5,face:{flip:!!flip,front:true},anim:Math.random()*3,talkT:rand(6,14)};block[gi(rm.x0+x,rm.y0+y)]=1;return n});
     rm.ex=rm.x0+rm.exit[0];rm.ey=rm.y0+rm.exit[1];
-    ROOMST[id]=Object.assign(snapScene(),{gc:buildRoomGround(rm),npcs:ns});
+    ROOMST[id]=Object.assign(snapScene(),{gc:ASSETS.ok?ASSETS.rooms[id]:buildRoomGround(rm),npcs:ns});
   }
   loadScene(WORLDSNAP);
 }
@@ -2433,8 +2446,9 @@ function scr(e){const s=iso(e.x,e.y);return{x:Math.round((s.x-CAM.x)*K)/K,y:Math
 function heroSprite(){
   let state='idle',f=Math.floor(TIME*1.6)%2;
   if(me.dead)state='dead',f=0;else if(me.sit)state='sit',f=0;else if(me.cast)state='cast',f=0;else if(me.atkT>0)state='attack',f=clamp(Math.floor((1-me.atkT/.3)*3),0,2);else if(me.moving)state='walk',f=Math.floor(me.walkA*9)%4;
-  const L=heroLook(),dir=me.face.front?'f':'b';
-  return cached(`h_${L.id}_${dir}_${state}_${f}`,()=>sprHuman(L,dir,state,f));
+  const dir=me.face.front?'f':'b';
+  if(ASSETS.ok)return heroComposite(me.app,me.eq,me.conj&&me.conj.el,dir,state,f);
+  const L=heroLook();return cached(`h_${L.id}_${dir}_${state}_${f}`,()=>sprHuman(L,dir,state,f));
 }
 function render(){
   g.setTransform(K,0,0,K,0,0);g.imageSmoothingEnabled=false;
@@ -2490,7 +2504,7 @@ function render(){
     }else if(it.k==='npc'){
       di(SPR.shMed,s.x-9,s.y-4);
       const f=Math.floor(o.anim*1.4)%2,dir=o.face.front?'f':'b';
-      drawSpr(cached(`n_${o.look.id}_${dir}_${f}`,()=>sprHuman(o.look,dir,'idle',f)),s.x,s.y+3,o.face.flip);
+      drawSpr((ASSETS.ok&&ASSETS.npc[`${o.look.id}_${dir}_${f}`])||cached(`n_${o.look.id}_${dir}_${f}`,()=>sprHuman(o.look,dir,'idle',f)),s.x,s.y+3,o.face.flip);
     }else{
       di(SPR.shMed,s.x-9,s.y-4);
       let c=heroSprite();if(me.flash>0)c=tint(c,'#ff3030',.45);
@@ -2734,6 +2748,56 @@ function buildSprites(){
   SPR.post=sprBuilding({fw:1,fh:1,wh:22,rh:8,roof:'pyr',ov:.05,rr:R.log,wall:'log',win:false});
   SPR.bld={};for(const b of BUILDINGS)SPR.bld[b.id]=sprBuilding(b.spec);
 }
+// =====================================================================
+// Assets prontos: o jogo lê as folhas de assets/ em vez de desenhar os sprites
+// =====================================================================
+const GERAR=/[?&]gerar/.test(location.search)||location.protocol==='file:';
+const SEED_VILA=20261119,SEED_BOSQUE=20261120;
+const ASSETS={ok:false,layers:{},npc:{},mon:{},ground:{},rooms:{}};
+function withSeed(seed,fn){let a=seed>>>0;const r0=Math.random;Math.random=()=>{a=(a+0x6D2B79F5)|0;let t=Math.imul(a^(a>>>15),1|a);t=(t+Math.imul(t^(t>>>7),61|t))^t;return((t^(t>>>14))>>>0)/4294967296};try{return fn()}finally{Math.random=r0}}
+function loadImg(src){return new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=()=>rej(new Error('não carregou '+src));i.src=src})}
+async function loadSheet(base){
+  const meta=await fetch('assets/'+base+'.json').then(r=>{if(!r.ok)throw new Error('não carregou '+base);return r.json()});
+  const img=await loadImg('assets/'+base.replace(/[^/]+$/,'')+meta.imagem),out={};
+  for(const n in meta.quadros){const f=meta.quadros[n],c=canvas(f.w,f.h);c.getContext('2d').drawImage(img,f.x,f.y,f.w,f.h,0,0,f.w,f.h);c.k=f.k;out[n]={c,meta:f}}
+  return out;
+}
+function setPath(o,path,v){for(let i=0;i<path.length-1;i++){const k=path[i];if(o[k]==null)o[k]=typeof path[i+1]==='number'?[]:{};o=o[k]}o[path[path.length-1]]=v}
+async function loadAssets(){
+  const man=await fetch('assets/manifesto.json').then(r=>{if(!r.ok)throw new Error('sem manifesto');return r.json()});
+  const sheets=await Promise.all([...man.cenario,...man.camadas,man.npcs,man.monstros,man.interiores].map(loadSheet));
+  let i=0;
+  for(const base of man.cenario){const sh=sheets[i++];for(const n in sh){const{c,meta}=sh[n];setPath(SPR,meta.path,meta.ax!=null?{c,ax:meta.ax,ay:meta.ay,mc:meta.mc}:c)}}
+  for(const base of man.camadas){const sh=sheets[i++],id=base.split('/').pop();ASSETS.layers[id]={};for(const n in sh)ASSETS.layers[id][n]=sh[n].c}
+  {const sh=sheets[i++];for(const n in sh)ASSETS.npc[n]=sh[n].c}
+  {const sh=sheets[i++];for(const n in sh)ASSETS.mon[n]=sh[n].c}
+  {const sh=sheets[i++];for(const n in sh)ASSETS.rooms[n]={c:sh[n].c,off:sh[n].meta.off}}
+  const gs=await Promise.all(Object.values(man.chao).map(f=>loadImg('assets/'+f)));Object.keys(man.chao).forEach((k,j)=>ASSETS.ground[k]=gs[j]);
+  ASSETS.ok=true;
+}
+// ---------- protagonista montado de camadas, com troca de paleta (pele e cabelo)
+function _hx(a,b,t){const A=hex(a),B=hex(b);return'#'+A.map((v,i)=>Math.max(0,Math.min(255,Math.round(v+(B[i]-v)*t))).toString(16).padStart(2,'0')).join('')}
+function _hr(b){return[_hx(b,'#160c24',.6),_hx(b,'#22163a',.4),_hx(b,'#2a2244',.18),_hx(b,'#000000',0),_hx(b,'#fff2d0',.22),_hx(b,'#fffaf0',.46)]}
+function skinDerived(s){return[_hx(s,'#6a2e30',.5),_hx(s,'#9a5048',.32),_hx(s,'#c07060',.16),_hx(s,'#000000',0),_hx(s,'#fff4e8',.3),_hx(s,'#ffffff',.5),..._hr(s),_hx(s,'#f08080',.22),_hx(s,'#f08080',.3),_hx(s,'#c05a5a',.45),_hx(s,'#e07070',.4),_hx(s,'#000000',.25)]}
+function hairDerived([H0,H1,H2]){return[_hx(H0,'#100818',.45),_hx(H0,'#000000',0),_hx(H0,H1,.5),_hx(H1,'#000000',0),_hx(H1,H2,.55),_hx(H2,'#000000',0)]}
+function colorMap(from,to){const m=new Map(),iv=c=>{const a=hex(c);return(a[0]<<16)|(a[1]<<8)|a[2]};from.forEach((f,i)=>{const a=iv(f);if(!m.has(a))m.set(a,iv(to[i]))});return m}
+function recolor(cv,map){if(!map)return cv;const c=canvas(cv.width,cv.height);c.k=cv.k;const q=c.getContext('2d');q.drawImage(cv,0,0);const im=q.getImageData(0,0,c.width,c.height),d=im.data;
+  for(let i=0;i<d.length;i+=4){if(!d[i+3])continue;const t=map.get((d[i]<<16)|(d[i+1]<<8)|d[i+2]);if(t!==undefined){d[i]=t>>16;d[i+1]=t>>8&255;d[i+2]=t&255}}q.putImageData(im,0,0);return c}
+const HERO_BASE={sk:1,hc:2};
+function heroComposite(A,eq,conjEl,dir,state,f){
+  A=Object.assign({},APP_DEF,A||{});
+  const arm=eq.armor||'nenhuma',legs=eq.legs||'nenhuma',wpn=conjEl?(CONJ[conjEl].wt==='desarmado'?null:'cj_'+conjEl):eq.weapon,pose=dir+'_'+state+'_'+f;
+  return cached(['hc',A.sex,A.hs,A.hc,A.sk,arm,legs,wpn,pose].join('|'),()=>{
+    const L=ASSETS.layers;
+    const sm=A.sk===HERO_BASE.sk?null:cached('skm'+A.sk,()=>colorMap(skinDerived(SKIN_TONES[HERO_BASE.sk].c[0]),skinDerived(SKIN_TONES[A.sk].c[0])));
+    const hm=A.hc===HERO_BASE.hc?null:cached('hrm'+A.hc,()=>colorMap(hairDerived(HAIR_COLORS[HERO_BASE.hc].c),hairDerived(HAIR_COLORS[A.hc].c)));
+    const part=(sheet,name,...maps)=>{const c=L[sheet]&&L[sheet][name];if(!c)return null;let r=c;for(const m of maps)r=recolor(r,m);return r};
+    const cape=arm==='jaqueta'?part('capa_jaqueta',pose):null,lg=part('pernas_'+legs,pose,sm),to=part('tronco_'+A.sex+'_'+arm,pose,sm),hd=part('cabeca_'+A.sex,pose,sm,hm),
+      hA=part('cabelo_'+A.hs,'hairA_'+pose,sm,hm),hB=part('cabelo_'+A.hs,'hairB_'+pose,sm,hm),hC=part('cabelo_'+A.hs,'hairC_'+pose,sm,hm),w=wpn?part('arma_'+wpn,pose):null;
+    const order=dir==='f'?[cape,lg,hA,to,hB,hd,hC,w]:[w,lg,to,hd,hC];
+    const base=order.find(x=>x);const c=canvas(base.width,base.height),q=c.getContext('2d');for(const x of order)if(x)q.drawImage(x,0,0);
+    const out=outline(c,'#1a1020',2);out.k=KH;return out});
+}
 function startGame(data){
   initHero(data);CLOCK0=(typeof data.clock==='number'?data.clock:7)-TIME/60;
   hot=(data.hot||[null,null,null,null,null,null,null,null,null]).map(h=>h&&h.type==='skill'&&!unlocked(h.id)?null:h);
@@ -2760,8 +2824,13 @@ function loop(now){
   }
   requestAnimationFrame(loop);
 }
-function boot(){
-  buildCursors();setCur('arrow');buildSprites();genMap();makeNPCs();buildGround();buildRooms();
+async function boot(){
+  buildCursors();setCur('arrow');
+  if(!GERAR){try{$('loading').textContent='Carregando assets…';await loadAssets()}catch(e){console.warn('Assets indisponíveis; desenhando no navegador.',e);ASSETS.ok=false}}
+  if(!ASSETS.ok)buildSprites();
+  withSeed(SEED_VILA,genMap);makeNPCs();
+  if(ASSETS.ok){groundC=ASSETS.ground.vila;buildMini()}else withSeed(SEED_VILA+1,buildGround);
+  buildRooms();
   MAPS.vila=Object.assign(mapState(),{name:'Campos do Sabiá',spawns:SPAWNS,npcs});MAPS.bosque={name:'Bosque do Orvalho',spawns:SPAWNS_BOSQUE};
   for(let i=0;i<36;i++)petals.push({x:rand(0,W),y:rand(0,H),vx:rand(6,16),vy:rand(8,18),ph:rand(0,6),col:pick(['#ffc0d8','#ffe0ec','#ffffff','#f8a8c8'])});
   const chars=loadChars();let delAsk=null;
@@ -2786,7 +2855,7 @@ function boot(){
     document.querySelectorAll('#ccHc i').forEach((b,i)=>b.classList.toggle('on',i===app.hc));
     document.querySelectorAll('#ccSk i').forEach((b,i)=>b.classList.toggle('on',i===app.sk));
     const SKN=SKIN_TONES[app.sk].c,lk=look('hero',{sex:app.sex,hs:app.hs,hair:HAIR_COLORS[app.hc].c,skin:SKN[0],skinD:SKN[1],tunic:'#f2f2f4',tunicD:'#c4c8d2',trim:'#3a6ac8',belt:'#2a2a34',print:'#3a6ac8',short:1,pants:'#3a5a9a',pantsD:'#2a4070',boot:'#f0f0f0',legsJeans:1,weapon:0});
-    const spr=sprHuman(lk,ccDir,'idle',0),cv2=$('ccPrev'),q=cv2.getContext('2d');q.clearRect(0,0,cv2.width,cv2.height);q.imageSmoothingEnabled=false;
+    const spr=ASSETS.ok?heroComposite(app,{armor:'camiseta',legs:'jeans',weapon:null},null,ccDir,'idle',0):sprHuman(lk,ccDir,'idle',0),cv2=$('ccPrev'),q=cv2.getContext('2d');q.clearRect(0,0,cv2.width,cv2.height);q.imageSmoothingEnabled=false;
     const sc=Math.min(cv2.width/spr.width,cv2.height/spr.height)*1.25;q.drawImage(spr,Math.round((cv2.width-spr.width*sc)/2),Math.round(cv2.height-spr.height*sc+8),spr.width*sc,spr.height*sc)};
   $('ccHc').innerHTML=HAIR_COLORS.map(h=>`<i title="${h.name}" style="background:${h.c[1]}"></i>`).join('');
   $('ccSk').innerHTML=SKIN_TONES.map(h=>`<i title="${h.name}" style="background:${h.c[0]}"></i>`).join('');

@@ -1,0 +1,145 @@
+{
+ "base": {
+  "pele": {
+   "name": "Clara",
+   "c": [
+    "#f8d0b0",
+    "#e0a888"
+   ]
+  },
+  "cabelo": {
+   "name": "Castanho",
+   "c": [
+    "#4a301c",
+    "#7a5532",
+    "#a87c4c"
+   ]
+  }
+ },
+ "cores_de_cabelo": [
+  {
+   "name": "Preto",
+   "c": [
+    "#141018",
+    "#262230",
+    "#45404f"
+   ]
+  },
+  {
+   "name": "Castanho-escuro",
+   "c": [
+    "#2a1a12",
+    "#4a2e1e",
+    "#6e4a32"
+   ]
+  },
+  {
+   "name": "Castanho",
+   "c": [
+    "#4a301c",
+    "#7a5532",
+    "#a87c4c"
+   ]
+  },
+  {
+   "name": "Castanho-claro",
+   "c": [
+    "#6a4a2a",
+    "#9a7044",
+    "#c8a070"
+   ]
+  },
+  {
+   "name": "Ruivo",
+   "c": [
+    "#7a2a14",
+    "#b8481e",
+    "#e8783e"
+   ]
+  },
+  {
+   "name": "Loiro",
+   "c": [
+    "#a07a2a",
+    "#d8b048",
+    "#f8e08a"
+   ]
+  },
+  {
+   "name": "Platinado",
+   "c": [
+    "#a8a49a",
+    "#dcd8cc",
+    "#fffcf0"
+   ]
+  },
+  {
+   "name": "Grisalho",
+   "c": [
+    "#5a5a62",
+    "#8e8e98",
+    "#c8c8d0"
+   ]
+  },
+  {
+   "name": "Azul",
+   "c": [
+    "#1a2a6a",
+    "#2e4aa8",
+    "#5a80e0"
+   ]
+  },
+  {
+   "name": "Rosa",
+   "c": [
+    "#a03a6a",
+    "#d86a9a",
+    "#f8a8c8"
+   ]
+  }
+ ],
+ "tons_de_pele": [
+  {
+   "name": "Muito clara",
+   "c": [
+    "#fbe2d0",
+    "#e8baa2"
+   ]
+  },
+  {
+   "name": "Clara",
+   "c": [
+    "#f8d0b0",
+    "#e0a888"
+   ]
+  },
+  {
+   "name": "Média",
+   "c": [
+    "#e8b890",
+    "#c89068"
+   ]
+  },
+  {
+   "name": "Morena",
+   "c": [
+    "#c8916a",
+    "#a06c48"
+   ]
+  },
+  {
+   "name": "Escura",
+   "c": [
+    "#a06a48",
+    "#7e4e32"
+   ]
+  },
+  {
+   "name": "Muito escura",
+   "c": [
+    "#6e4630",
+    "#52321f"
+   ]
+  }
+ ]
+}

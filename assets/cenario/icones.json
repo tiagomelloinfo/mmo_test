@@ -1,0 +1,635 @@
+{
+ "imagem": "icones.png",
+ "largura": 1024,
+ "altura": 64,
+ "nota": "Ícones de itens, habilidades e placas.",
+ "quadros": {
+  "icons_potion_r": {
+   "x": 2,
+   "y": 2,
+   "w": 28,
+   "h": 28,
+   "k": 2,
+   "path": [
+    "icons",
+    "potion_r"
+   ]
+  },
+  "icons_potion_o": {
+   "x": 34,
+   "y": 2,
+   "w": 28,
+   "h": 28,
+   "k": 2,
+   "path": [
+    "icons",
+    "potion_o"
+   ]
+  },
+  "icons_potion_b": {
+   "x": 66,
+   "y": 2,
+   "w": 28,
+   "h": 28,
+   "k": 2,
+   "path": [
+    "icons",
+    "potion_b"
+   ]
+  },
+  "icons_mace": {
+   "x": 98,
+   "y": 2,
+   "w": 28,
+   "h": 28,
+   "k": 2,
+   "path": [
+    "icons",
+    "mace"
+   ]
+  },
+  "icons_carrot": {
+   "x": 130,
+   "y": 2,
+   "w": 28,
+   "h": 28,
+   "k": 2,
+   "path": [
+    "icons",
+    "carrot"
+   ]
+  },
+  "icons_herb": {
+   "x": 162,
+   "y": 2,
+   "w": 28,
+   "h": 28,
+   "k": 2,
+   "path": [
+    "icons",
+    "herb"
+   ]
+  },
+  "icons_wing": {
+   "x": 194,
+   "y": 2,
+   "w": 28,
+   "h": 28,
+   "k": 2,
+   "path": [
+    "icons",
+    "wing"
+   ]
+  },
+  "icons_wing_b": {
+   "x": 226,
+   "y": 2,
+   "w": 28,
+   "h": 28,
+   "k": 2,
+   "path": [
+    "icons",
+    "wing_b"
+   ]
+  },
+  "icons_jelly": {
+   "x": 258,
+   "y": 2,
+   "w": 28,
+   "h": 28,
+   "k": 2,
+   "path": [
+    "icons",
+    "jelly"
+   ]
+  },
+  "icons_fluff": {
+   "x": 290,
+   "y": 2,
+   "w": 28,
+   "h": 28,
+   "k": 2,
+   "path": [
+    "icons",
+    "fluff"
+   ]
+  },
+  "icons_tusk": {
+   "x": 322,
+   "y": 2,
+   "w": 28,
+   "h": 28,
+   "k": 2,
+   "path": [
+    "icons",
+    "tusk"
+   ]
+  },
+  "icons_shell": {
+   "x": 354,
+   "y": 2,
+   "w": 28,
+   "h": 28,
+   "k": 2,
+   "path": [
+    "icons",
+    "shell"
+   ]
+  },
+  "icons_crown": {
+   "x": 386,
+   "y": 2,
+   "w": 28,
+   "h": 28,
+   "k": 2,
+   "path": [
+    "icons",
+    "crown"
+   ]
+  },
+  "icons_knife": {
+   "x": 418,
+   "y": 2,
+   "w": 28,
+   "h": 28,
+   "k": 2,
+   "path": [
+    "icons",
+    "knife"
+   ]
+  },
+  "icons_dagger": {
+   "x": 450,
+   "y": 2,
+   "w": 28,
+   "h": 28,
+   "k": 2,
+   "path": [
+    "icons",
+    "dagger"
+   ]
+  },
+  "icons_sword_t": {
+   "x": 482,
+   "y": 2,
+   "w": 28,
+   "h": 28,
+   "k": 2,
+   "path": [
+    "icons",
+    "sword_t"
+   ]
+  },
+  "icons_sword": {
+   "x": 514,
+   "y": 2,
+   "w": 28,
+   "h": 28,
+   "k": 2,
+   "path": [
+    "icons",
+    "sword"
+   ]
+  },
+  "icons_sword_g": {
+   "x": 546,
+   "y": 2,
+   "w": 28,
+   "h": 28,
+   "k": 2,
+   "path": [
+    "icons",
+    "sword_g"
+   ]
+  },
+  "icons_spear": {
+   "x": 578,
+   "y": 2,
+   "w": 28,
+   "h": 28,
+   "k": 2,
+   "path": [
+    "icons",
+    "spear"
+   ]
+  },
+  "icons_spear2": {
+   "x": 610,
+   "y": 2,
+   "w": 28,
+   "h": 28,
+   "k": 2,
+   "path": [
+    "icons",
+    "spear2"
+   ]
+  },
+  "icons_axe": {
+   "x": 642,
+   "y": 2,
+   "w": 28,
+   "h": 28,
+   "k": 2,
+   "path": [
+    "icons",
+    "axe"
+   ]
+  },
+  "icons_axe2": {
+   "x": 674,
+   "y": 2,
+   "w": 28,
+   "h": 28,
+   "k": 2,
+   "path": [
+    "icons",
+    "axe2"
+   ]
+  },
+  "icons_mace2": {
+   "x": 706,
+   "y": 2,
+   "w": 28,
+   "h": 28,
+   "k": 2,
+   "path": [
+    "icons",
+    "mace2"
+   ]
+  },
+  "icons_tshirt": {
+   "x": 738,
+   "y": 2,
+   "w": 28,
+   "h": 28,
+   "k": 2,
+   "path": [
+    "icons",
+    "tshirt"
+   ]
+  },
+  "icons_pants": {
+   "x": 770,
+   "y": 2,
+   "w": 28,
+   "h": 28,
+   "k": 2,
+   "path": [
+    "icons",
+    "pants"
+   ]
+  },
+  "icons_shirt": {
+   "x": 802,
+   "y": 2,
+   "w": 28,
+   "h": 28,
+   "k": 2,
+   "path": [
+    "icons",
+    "shirt"
+   ]
+  },
+  "icons_jacket": {
+   "x": 834,
+   "y": 2,
+   "w": 28,
+   "h": 28,
+   "k": 2,
+   "path": [
+    "icons",
+    "jacket"
+   ]
+  },
+  "icons_pants_v": {
+   "x": 866,
+   "y": 2,
+   "w": 28,
+   "h": 28,
+   "k": 2,
+   "path": [
+    "icons",
+    "pants_v"
+   ]
+  },
+  "icons_mail": {
+   "x": 898,
+   "y": 2,
+   "w": 28,
+   "h": 28,
+   "k": 2,
+   "path": [
+    "icons",
+    "mail"
+   ]
+  },
+  "icons_card": {
+   "x": 930,
+   "y": 2,
+   "w": 28,
+   "h": 28,
+   "k": 2,
+   "path": [
+    "icons",
+    "card"
+   ]
+  },
+  "icons_s_forca": {
+   "x": 962,
+   "y": 2,
+   "w": 28,
+   "h": 28,
+   "k": 2,
+   "path": [
+    "icons",
+    "s_forca"
+   ]
+  },
+  "icons_s_destreza": {
+   "x": 994,
+   "y": 2,
+   "w": 28,
+   "h": 28,
+   "k": 2,
+   "path": [
+    "icons",
+    "s_destreza"
+   ]
+  },
+  "icons_s_agilidade": {
+   "x": 2,
+   "y": 34,
+   "w": 28,
+   "h": 28,
+   "k": 2,
+   "path": [
+    "icons",
+    "s_agilidade"
+   ]
+  },
+  "icons_s_resistencia": {
+   "x": 34,
+   "y": 34,
+   "w": 28,
+   "h": 28,
+   "k": 2,
+   "path": [
+    "icons",
+    "s_resistencia"
+   ]
+  },
+  "icons_s_inteligencia": {
+   "x": 66,
+   "y": 34,
+   "w": 28,
+   "h": 28,
+   "k": 2,
+   "path": [
+    "icons",
+    "s_inteligencia"
+   ]
+  },
+  "icons_s_desarmado": {
+   "x": 98,
+   "y": 34,
+   "w": 28,
+   "h": 28,
+   "k": 2,
+   "path": [
+    "icons",
+    "s_desarmado"
+   ]
+  },
+  "icons_e_fogo": {
+   "x": 130,
+   "y": 34,
+   "w": 28,
+   "h": 28,
+   "k": 2,
+   "path": [
+    "icons",
+    "e_fogo"
+   ]
+  },
+  "icons_e_agua": {
+   "x": 162,
+   "y": 34,
+   "w": 28,
+   "h": 28,
+   "k": 2,
+   "path": [
+    "icons",
+    "e_agua"
+   ]
+  },
+  "icons_e_terra": {
+   "x": 194,
+   "y": 34,
+   "w": 28,
+   "h": 28,
+   "k": 2,
+   "path": [
+    "icons",
+    "e_terra"
+   ]
+  },
+  "icons_e_ar": {
+   "x": 226,
+   "y": 34,
+   "w": 28,
+   "h": 28,
+   "k": 2,
+   "path": [
+    "icons",
+    "e_ar"
+   ]
+  },
+  "icons_e_luz": {
+   "x": 258,
+   "y": 34,
+   "w": 28,
+   "h": 28,
+   "k": 2,
+   "path": [
+    "icons",
+    "e_luz"
+   ]
+  },
+  "icons_e_sombras": {
+   "x": 290,
+   "y": 34,
+   "w": 28,
+   "h": 28,
+   "k": 2,
+   "path": [
+    "icons",
+    "e_sombras"
+   ]
+  },
+  "icons_a_golpe": {
+   "x": 322,
+   "y": 34,
+   "w": 28,
+   "h": 28,
+   "k": 2,
+   "path": [
+    "icons",
+    "a_golpe"
+   ]
+  },
+  "icons_a_giro": {
+   "x": 354,
+   "y": 34,
+   "w": 28,
+   "h": 28,
+   "k": 2,
+   "path": [
+    "icons",
+    "a_giro"
+   ]
+  },
+  "icons_a_cura": {
+   "x": 386,
+   "y": 34,
+   "w": 28,
+   "h": 28,
+   "k": 2,
+   "path": [
+    "icons",
+    "a_cura"
+   ]
+  },
+  "icons_cj_fogo": {
+   "x": 418,
+   "y": 34,
+   "w": 28,
+   "h": 28,
+   "k": 2,
+   "path": [
+    "icons",
+    "cj_fogo"
+   ]
+  },
+  "icons_cj_agua": {
+   "x": 450,
+   "y": 34,
+   "w": 28,
+   "h": 28,
+   "k": 2,
+   "path": [
+    "icons",
+    "cj_agua"
+   ]
+  },
+  "icons_cj_terra": {
+   "x": 482,
+   "y": 34,
+   "w": 28,
+   "h": 28,
+   "k": 2,
+   "path": [
+    "icons",
+    "cj_terra"
+   ]
+  },
+  "icons_cj_ar": {
+   "x": 514,
+   "y": 34,
+   "w": 28,
+   "h": 28,
+   "k": 2,
+   "path": [
+    "icons",
+    "cj_ar"
+   ]
+  },
+  "icons_cj_luz": {
+   "x": 546,
+   "y": 34,
+   "w": 28,
+   "h": 28,
+   "k": 2,
+   "path": [
+    "icons",
+    "cj_luz"
+   ]
+  },
+  "icons_cj_sombras": {
+   "x": 578,
+   "y": 34,
+   "w": 28,
+   "h": 28,
+   "k": 2,
+   "path": [
+    "icons",
+    "cj_sombras"
+   ]
+  },
+  "icons_buff_bless": {
+   "x": 610,
+   "y": 34,
+   "w": 28,
+   "h": 28,
+   "k": 2,
+   "path": [
+    "icons",
+    "buff_bless"
+   ]
+  },
+  "icons_buff_agi": {
+   "x": 642,
+   "y": 34,
+   "w": 28,
+   "h": 28,
+   "k": 2,
+   "path": [
+    "icons",
+    "buff_agi"
+   ]
+  },
+  "icons_sign_guild": {
+   "x": 674,
+   "y": 34,
+   "w": 28,
+   "h": 28,
+   "k": 2,
+   "path": [
+    "icons",
+    "sign_guild"
+   ]
+  },
+  "icons_sign_magic": {
+   "x": 706,
+   "y": 34,
+   "w": 28,
+   "h": 28,
+   "k": 2,
+   "path": [
+    "icons",
+    "sign_magic"
+   ]
+  },
+  "icons_sign_tavern": {
+   "x": 738,
+   "y": 34,
+   "w": 28,
+   "h": 28,
+   "k": 2,
+   "path": [
+    "icons",
+    "sign_tavern"
+   ]
+  },
+  "icons_sign_inn": {
+   "x": 770,
+   "y": 34,
+   "w": 28,
+   "h": 28,
+   "k": 2,
+   "path": [
+    "icons",
+    "sign_inn"
+   ]
+  }
+ }
+}

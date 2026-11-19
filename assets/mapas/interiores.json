@@ -1,0 +1,68 @@
+{
+ "imagem": "interiores.png",
+ "largura": 2660,
+ "altura": 416,
+ "nota": "Chão e paredes de cada interior; off = deslocamento no mundo.",
+ "quadros": {
+  "tavern": {
+   "x": 2,
+   "y": 2,
+   "w": 592,
+   "h": 412,
+   "k": 2,
+   "nome": "Taverna do Caneco",
+   "off": {
+    "x": 1388,
+    "y": 644
+   }
+  },
+  "shop": {
+   "x": 598,
+   "y": 2,
+   "w": 528,
+   "h": 380,
+   "k": 2,
+   "nome": "Venda do Tomas",
+   "off": {
+    "x": 1404,
+    "y": 660
+   }
+  },
+  "school": {
+   "x": 1130,
+   "y": 2,
+   "w": 528,
+   "h": 380,
+   "k": 2,
+   "nome": "Galpão de Treino",
+   "off": {
+    "x": 1404,
+    "y": 660
+   }
+  },
+  "inn": {
+   "x": 1662,
+   "y": 2,
+   "w": 528,
+   "h": 380,
+   "k": 2,
+   "nome": "Hospedaria do Sabiá",
+   "off": {
+    "x": 1404,
+    "y": 660
+   }
+  },
+  "tower": {
+   "x": 2194,
+   "y": 2,
+   "w": 464,
+   "h": 348,
+   "k": 2,
+   "nome": "Cabana da Sábia",
+   "off": {
+    "x": 1420,
+    "y": 668
+   }
+  }
+ }
+}

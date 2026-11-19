@@ -1,0 +1,171 @@
+{
+ "imagem": "cabelos_femininos.png",
+ "largura": 272,
+ "altura": 1720,
+ "celula": {
+  "w": 136,
+  "h": 172
+ },
+ "quadros": {
+  "f1_frente": {
+   "x": 2,
+   "y": 2,
+   "w": 132,
+   "h": 168,
+   "k": 4,
+   "cabelo": "Longo liso"
+  },
+  "f1_costas": {
+   "x": 138,
+   "y": 2,
+   "w": 132,
+   "h": 168,
+   "k": 4,
+   "cabelo": "Longo liso"
+  },
+  "f2_frente": {
+   "x": 2,
+   "y": 174,
+   "w": 132,
+   "h": 168,
+   "k": 4,
+   "cabelo": "Rabo de cavalo alto"
+  },
+  "f2_costas": {
+   "x": 138,
+   "y": 174,
+   "w": 132,
+   "h": 168,
+   "k": 4,
+   "cabelo": "Rabo de cavalo alto"
+  },
+  "f3_frente": {
+   "x": 2,
+   "y": 346,
+   "w": 132,
+   "h": 168,
+   "k": 4,
+   "cabelo": "Maria-chiquinha"
+  },
+  "f3_costas": {
+   "x": 138,
+   "y": 346,
+   "w": 132,
+   "h": 168,
+   "k": 4,
+   "cabelo": "Maria-chiquinha"
+  },
+  "f4_frente": {
+   "x": 2,
+   "y": 518,
+   "w": 132,
+   "h": 168,
+   "k": 4,
+   "cabelo": "Chanel"
+  },
+  "f4_costas": {
+   "x": 138,
+   "y": 518,
+   "w": 132,
+   "h": 168,
+   "k": 4,
+   "cabelo": "Chanel"
+  },
+  "f5_frente": {
+   "x": 2,
+   "y": 690,
+   "w": 132,
+   "h": 168,
+   "k": 4,
+   "cabelo": "Pixie"
+  },
+  "f5_costas": {
+   "x": 138,
+   "y": 690,
+   "w": 132,
+   "h": 168,
+   "k": 4,
+   "cabelo": "Pixie"
+  },
+  "f6_frente": {
+   "x": 2,
+   "y": 862,
+   "w": 132,
+   "h": 168,
+   "k": 4,
+   "cabelo": "Coque"
+  },
+  "f6_costas": {
+   "x": 138,
+   "y": 862,
+   "w": 132,
+   "h": 168,
+   "k": 4,
+   "cabelo": "Coque"
+  },
+  "f7_frente": {
+   "x": 2,
+   "y": 1034,
+   "w": 132,
+   "h": 168,
+   "k": 4,
+   "cabelo": "Trança lateral"
+  },
+  "f7_costas": {
+   "x": 138,
+   "y": 1034,
+   "w": 132,
+   "h": 168,
+   "k": 4,
+   "cabelo": "Trança lateral"
+  },
+  "f8_frente": {
+   "x": 2,
+   "y": 1206,
+   "w": 132,
+   "h": 168,
+   "k": 4,
+   "cabelo": "Ondulado"
+  },
+  "f8_costas": {
+   "x": 138,
+   "y": 1206,
+   "w": 132,
+   "h": 168,
+   "k": 4,
+   "cabelo": "Ondulado"
+  },
+  "f9_frente": {
+   "x": 2,
+   "y": 1378,
+   "w": 132,
+   "h": 168,
+   "k": 4,
+   "cabelo": "Franja lateral"
+  },
+  "f9_costas": {
+   "x": 138,
+   "y": 1378,
+   "w": 132,
+   "h": 168,
+   "k": 4,
+   "cabelo": "Franja lateral"
+  },
+  "f10_frente": {
+   "x": 2,
+   "y": 1550,
+   "w": 132,
+   "h": 168,
+   "k": 4,
+   "cabelo": "Tranças duplas"
+  },
+  "f10_costas": {
+   "x": 138,
+   "y": 1550,
+   "w": 132,
+   "h": 168,
+   "k": 4,
+   "cabelo": "Tranças duplas"
+  }
+ }
+}

@@ -1,0 +1,171 @@
+{
+ "imagem": "cabelos_masculinos.png",
+ "largura": 272,
+ "altura": 1720,
+ "celula": {
+  "w": 136,
+  "h": 172
+ },
+ "quadros": {
+  "m1_frente": {
+   "x": 2,
+   "y": 2,
+   "w": 132,
+   "h": 168,
+   "k": 4,
+   "cabelo": "Bagunçado"
+  },
+  "m1_costas": {
+   "x": 138,
+   "y": 2,
+   "w": 132,
+   "h": 168,
+   "k": 4,
+   "cabelo": "Bagunçado"
+  },
+  "m2_frente": {
+   "x": 2,
+   "y": 174,
+   "w": 132,
+   "h": 168,
+   "k": 4,
+   "cabelo": "Raspado"
+  },
+  "m2_costas": {
+   "x": 138,
+   "y": 174,
+   "w": 132,
+   "h": 168,
+   "k": 4,
+   "cabelo": "Raspado"
+  },
+  "m3_frente": {
+   "x": 2,
+   "y": 346,
+   "w": 132,
+   "h": 168,
+   "k": 4,
+   "cabelo": "Topete"
+  },
+  "m3_costas": {
+   "x": 138,
+   "y": 346,
+   "w": 132,
+   "h": 168,
+   "k": 4,
+   "cabelo": "Topete"
+  },
+  "m4_frente": {
+   "x": 2,
+   "y": 518,
+   "w": 132,
+   "h": 168,
+   "k": 4,
+   "cabelo": "Espetado"
+  },
+  "m4_costas": {
+   "x": 138,
+   "y": 518,
+   "w": 132,
+   "h": 168,
+   "k": 4,
+   "cabelo": "Espetado"
+  },
+  "m5_frente": {
+   "x": 2,
+   "y": 690,
+   "w": 132,
+   "h": 168,
+   "k": 4,
+   "cabelo": "Repartido de lado"
+  },
+  "m5_costas": {
+   "x": 138,
+   "y": 690,
+   "w": 132,
+   "h": 168,
+   "k": 4,
+   "cabelo": "Repartido de lado"
+  },
+  "m6_frente": {
+   "x": 2,
+   "y": 862,
+   "w": 132,
+   "h": 168,
+   "k": 4,
+   "cabelo": "Médio"
+  },
+  "m6_costas": {
+   "x": 138,
+   "y": 862,
+   "w": 132,
+   "h": 168,
+   "k": 4,
+   "cabelo": "Médio"
+  },
+  "m7_frente": {
+   "x": 2,
+   "y": 1034,
+   "w": 132,
+   "h": 168,
+   "k": 4,
+   "cabelo": "Rabo de cavalo"
+  },
+  "m7_costas": {
+   "x": 138,
+   "y": 1034,
+   "w": 132,
+   "h": 168,
+   "k": 4,
+   "cabelo": "Rabo de cavalo"
+  },
+  "m8_frente": {
+   "x": 2,
+   "y": 1206,
+   "w": 132,
+   "h": 168,
+   "k": 4,
+   "cabelo": "Longo solto"
+  },
+  "m8_costas": {
+   "x": 138,
+   "y": 1206,
+   "w": 132,
+   "h": 168,
+   "k": 4,
+   "cabelo": "Longo solto"
+  },
+  "m9_frente": {
+   "x": 2,
+   "y": 1378,
+   "w": 132,
+   "h": 168,
+   "k": 4,
+   "cabelo": "Coque samurai"
+  },
+  "m9_costas": {
+   "x": 138,
+   "y": 1378,
+   "w": 132,
+   "h": 168,
+   "k": 4,
+   "cabelo": "Coque samurai"
+  },
+  "m10_frente": {
+   "x": 2,
+   "y": 1550,
+   "w": 132,
+   "h": 168,
+   "k": 4,
+   "cabelo": "Moicano"
+  },
+  "m10_costas": {
+   "x": 138,
+   "y": 1550,
+   "w": 132,
+   "h": 168,
+   "k": 4,
+   "cabelo": "Moicano"
+  }
+ }
+}

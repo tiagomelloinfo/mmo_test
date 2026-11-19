@@ -1,0 +1,89 @@
+{
+ "imagem": "capa_jaqueta.png",
+ "largura": 1848,
+ "altura": 168,
+ "nota": "Camada sem contorno; o jogo empilha capa, pernas, cabelo (trás), tronco, cabelo (meio), cabeça, cabelo (frente) e arma, e contorna o conjunto. Pele \"Clara\" e cabelo \"Castanho\" são trocados por paleta.",
+ "celula": {
+  "w": 168,
+  "h": 168
+ },
+ "quadros": {
+  "f_idle_0": {
+   "x": 20,
+   "y": 2,
+   "w": 128,
+   "h": 164,
+   "k": 4
+  },
+  "f_idle_1": {
+   "x": 188,
+   "y": 2,
+   "w": 128,
+   "h": 164,
+   "k": 4
+  },
+  "f_walk_0": {
+   "x": 356,
+   "y": 2,
+   "w": 128,
+   "h": 164,
+   "k": 4
+  },
+  "f_walk_1": {
+   "x": 524,
+   "y": 2,
+   "w": 128,
+   "h": 164,
+   "k": 4
+  },
+  "f_walk_2": {
+   "x": 692,
+   "y": 2,
+   "w": 128,
+   "h": 164,
+   "k": 4
+  },
+  "f_walk_3": {
+   "x": 860,
+   "y": 2,
+   "w": 128,
+   "h": 164,
+   "k": 4
+  },
+  "f_attack_0": {
+   "x": 1028,
+   "y": 2,
+   "w": 128,
+   "h": 164,
+   "k": 4
+  },
+  "f_attack_1": {
+   "x": 1196,
+   "y": 2,
+   "w": 128,
+   "h": 164,
+   "k": 4
+  },
+  "f_attack_2": {
+   "x": 1364,
+   "y": 2,
+   "w": 128,
+   "h": 164,
+   "k": 4
+  },
+  "f_cast_0": {
+   "x": 1532,
+   "y": 2,
+   "w": 128,
+   "h": 164,
+   "k": 4
+  },
+  "f_dead_0": {
+   "x": 1682,
+   "y": 38,
+   "w": 164,
+   "h": 128,
+   "k": 4
+  }
+ }
+}
